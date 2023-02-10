@@ -21,12 +21,13 @@ int main()
 		 (typically small) maximum length)
 		-SOCK_RAW sockets provide access to internal network protocols and interfaces (only super-user)*/
 	int listening = socket(AF_INET, SOCK_STREAM, 0);
+	//? check what the sockets are
 	if (listening == -1)
 	{
 		std::cerr << "Can't create a socket!" << std::endl;
 		return (-1);
 	}
-
+	//TODO add setsockopt function and research
 	// Bind the socket to a IP / Port 
 	sockaddr_in hint;
 	hint.sin_family = AF_INET;

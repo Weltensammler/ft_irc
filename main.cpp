@@ -56,29 +56,29 @@ void readinput(int clientfd)
 	// While receiving display message, echo message
 	char buf[4096];
 	int i = 0;
-	// while (i >= 1024)
-	// {
-	// Clear the buffer
-	memset(buf, 0, 4096);
-	// Wait for a message
-	int bytesRecv = recv(clientfd, buf, 4096, 0);
-	if (bytesRecv == -1)
+	while (i <= 10)
 	{
-		std::cerr << "There was a connection issue!" << std::endl;
-		return;
-	}
-	if (bytesRecv == 0)
-	{
-		std::cerr << "The Client disconnected!" << std::endl;
-		return;
-	}
-	// Display message
-	std::cout << "Received: " << std::string(buf, 0, bytesRecv) << std::endl;
+		// Clear the buffer
+		memset(buf, 0, 4096);
+		// Wait for a message
+		int bytesRecv = recv(clientfd, buf, 4096, 0);
+		if (bytesRecv == -1)
+		{
+			std::cerr << "There was a connection issue!" << std::endl;
+			return;
+		}
+		if (bytesRecv == 0)
+		{
+			std::cerr << "The Client disconnected!" << std::endl;
+			return;
+		}
+		// Display message
+		std::cout << "Received: " << std::string(buf, 0, bytesRecv) << std::endl;
 
-	// Send message
-	send(clientfd, buf, bytesRecv + 1, 0);
-	i++;
-	// }
+		// Send message
+		send(clientfd, buf, bytesRecv + 1, 0);
+		i++;
+	}
 }
 
 /* Accepting a call */
@@ -88,7 +88,7 @@ void acceptcall(int server, pollfd *client)
 	{
 		if (client[i].fd == server && (client[i].revents & POLLIN))
 		{
-			std::cout << " New Connection " << std::endl;
+			std::cout << "New Connection " << std::endl;
 			sockaddr_in user;
 			socklen_t userSize = sizeof(user);
 			char host[NI_MAXHOST];
@@ -150,10 +150,15 @@ int main()
 		{
 		case 0:
 			std::cout << "Should not be possible" << std::endl;
+			continue;
+		case -1:
+			std::cout << "could not be possible" << std::endl;
+			continue;
 		default:
+			// std::cout << "begin of the default switch" << std::endl;
 			acceptcall(server, clients);
 			// readinput(clients);
-			break;
+			continue;
 		}
 	}
 

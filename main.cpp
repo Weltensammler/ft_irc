@@ -80,7 +80,10 @@ void readinput(int clientfd)
 		}
 
 		// Send message
-		send(clientfd, buf, bytesRecv + 1, 0);
+		if (send(clientfd, buf, bytesRecv + 1, 0) == -1)
+			std::cout << "failed to send \n";
+		else
+			std::cout << "could send \n";
 		i++;
 	// }
 }

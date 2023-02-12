@@ -36,7 +36,7 @@ int createserver(void)
 	hint.sin_family = AF_INET;
 	hint.sin_addr.s_addr = htonl(INADDR_ANY);
 	// inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr);
-	hint.sin_port = htons(54000); // here we should do the byteorder network/host using htons and htonl
+	hint.sin_port = htons(55000); // here we should do the byteorder network/host using htons and htonl
 	if (bind(listening, (sockaddr *)&hint, sizeof(hint)) == -1)
 	{
 		std::cerr << "Can't bind to IP/Port!" << std::endl;
@@ -56,8 +56,8 @@ void readinput(int clientfd)
 	// While receiving display message, echo message
 	char buf[4096];
 	int i = 0;
-	while (i <= 10)
-	{
+	// while (i <= 10)
+	// {
 		// Clear the buffer
 		memset(buf, 0, 4096);
 		// Wait for a message
@@ -65,20 +65,24 @@ void readinput(int clientfd)
 		if (bytesRecv == -1)
 		{
 			std::cerr << "There was a connection issue!" << std::endl;
-			return;
 		}
-		if (bytesRecv == 0)
+		else if (bytesRecv == 0)
 		{
+			if (close(clientfd) == -1)
+				std::cerr << "close!" << std::endl;
 			std::cerr << "The Client disconnected!" << std::endl;
-			return;
+			clientfd *= -1; // it will be ignored in future
 		}
-		// Display message
-		std::cout << "Received: " << std::string(buf, 0, bytesRecv) << std::endl;
+		else // data from client
+		{
+			// Display message
+			std::cout << "Received: " << std::string(buf, 0, bytesRecv) << std::endl;
+		}
 
 		// Send message
 		send(clientfd, buf, bytesRecv + 1, 0);
 		i++;
-	}
+	// }
 }
 
 /* Accepting a call */
@@ -86,50 +90,59 @@ void acceptcall(int server, pollfd *client)
 {
 	for (int i = 0; i < 1024; i++)
 	{
-		if (client[i].fd == server && (client[i].revents & POLLIN))
+		if ((client[i].revents & POLLIN)) // fd is ready fo reading
 		{
-			std::cout << "New Connection " << std::endl;
-			sockaddr_in user;
-			socklen_t userSize = sizeof(user);
-			char host[NI_MAXHOST];
-			char service[NI_MAXSERV];
-			memset(host, 0, NI_MAXHOST);
-			memset(service, 0, NI_MAXSERV);
+			std::cout << "came here\n";
+			if (client[i].fd == server) // request for new connection
+			{
 
-			int userSocket = accept(server, (sockaddr *)&user, &userSize);
-			if (userSocket == -1)
-			{
-				std::cerr << "Problem with client connecting!" << std::endl;
-				return;
+				std::cout << "New Connection " << std::endl;
+				sockaddr_in user;
+				socklen_t userSize = sizeof(user);
+				char host[NI_MAXHOST];
+				char service[NI_MAXSERV];
+				memset(host, 0, NI_MAXHOST);
+				memset(service, 0, NI_MAXSERV);
+				int userSocket = accept(server, (sockaddr *)&user, &userSize);
+				if (userSocket == -1)
+				{
+					std::cerr << "Problem with client connecting!" << std::endl;
+					return;
+				}
+
+				// TODO the next 10 lines are not needed, just there for testing purpose
+				int result = getnameinfo((sockaddr *)&user, userSize, host, NI_MAXHOST, service, NI_MAXSERV, 0);
+				if (result)
+				{
+					std::cout << host << " connected on " << service << std::endl;
+				}
+				else
+				{
+					inet_ntop(AF_INET, &user.sin_addr, host, NI_MAXHOST);
+					std::cout << host << " connected on " << ntohs(user.sin_port) << std::endl;
+				}
+				int j = 0;
+				for (; j < 1024; j++)
+					if (client[j].fd == -1)
+						break;
+				if (j < 1024)
+				{
+					client[j].fd = userSocket;
+					client[j].events = POLLIN; //? do we need this line
+					client[j].revents = 0;
+				}
+				else
+				{
+					close(userSocket);
+				}
 			}
-			// TODO the next 10 lines are not needed, just there for testing purpose
-			int result = getnameinfo((sockaddr *)&user, userSize, host, NI_MAXHOST, service, NI_MAXSERV, 0);
-			if (result)
+			else // data from an existing connection, recieve it
 			{
-				std::cout << host << " connected on " << service << std::endl;
-			}
-			else
-			{
-				inet_ntop(AF_INET, &user.sin_addr, host, NI_MAXHOST);
-				std::cout << host << " connected on " << ntohs(user.sin_port) << std::endl;
-			}
-			for (int i = 0; i < 1024; i++)
-				if (client[i].fd == -1)
-					break;
-			if (i < 1024)
-			{
-				client[i].fd = userSocket;
-				client[i].events = POLLIN; //? do we need this line
 				readinput(client[i].fd);
-			}
-			else
-			{
-				close(userSocket);
 			}
 		}
 	}
 }
-
 int main()
 {
 	struct pollfd clients[1024];
@@ -150,15 +163,15 @@ int main()
 		{
 		case 0:
 			std::cout << "Should not be possible" << std::endl;
-			continue;
+			break;
 		case -1:
 			std::cout << "could not be possible" << std::endl;
-			continue;
+			break;
 		default:
 			// std::cout << "begin of the default switch" << std::endl;
 			acceptcall(server, clients);
 			// readinput(clients);
-			continue;
+			break;
 		}
 	}
 

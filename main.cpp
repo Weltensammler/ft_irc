@@ -7,6 +7,14 @@
 #include <string.h>
 #include <string>
 #include <poll.h>
+#include <sstream>
+#include <signal.h>
+int fd_global;
+void	siginthandler(int signum)
+{
+close(fd_global);
+exit(1);
+}
 
 /* Create a socket */
 /*	-difference AF(adress family) and PF(protocol family) PF was intended to
@@ -51,40 +59,56 @@ int createserver(void)
 	return (listening);
 }
 
-void readinput(int clientfd)
+void readinput(int clientfd, pollfd *clients)
 {
 	// While receiving display message, echo message
 	char buf[4096];
 	int i = 0;
 	// while (i <= 10)
 	// {
-		// Clear the buffer
-		memset(buf, 0, 4096);
-		// Wait for a message
-		int bytesRecv = recv(clientfd, buf, 4096, 0);
-		if (bytesRecv == -1)
-		{
-			std::cerr << "There was a connection issue!" << std::endl;
-		}
-		else if (bytesRecv == 0)
-		{
-			if (close(clientfd) == -1)
-				std::cerr << "close!" << std::endl;
-			std::cerr << "The Client disconnected!" << std::endl;
-			clientfd *= -1; // it will be ignored in future
-		}
-		else // data from client
-		{
-			// Display message
-			std::cout << "Received: " << std::string(buf, 0, bytesRecv) << std::endl;
-		}
+	// Clear the buffer
+	memset(buf, 0, 4096);
+	// Wait for a message
+	int bytesRecv = recv(clientfd, buf, 4096, 0);
+	if (bytesRecv == -1)
+	{
+		std::cerr << "There was a connection issue!" << std::endl;
+	}
+	else if (bytesRecv == 0)
+	{
+		if (close(clientfd) == -1)
+			std::cerr << "close!" << std::endl;
+		std::cerr << "The Client disconnected!" << std::endl;
+		clientfd *= -1; // it will be ignored in future
+	}
+	else // data from client
+	{
+		// Display message
+		std::cout << "Received: " << std::string(buf, 0, bytesRecv) << std::endl;
+	}
 
-		// Send message
-		if (send(clientfd, buf, bytesRecv + 1, 0) == -1)
-			std::cout << "failed to send \n";
-		else
-			std::cout << "could send \n";
-		i++;
+	// Send message
+	// std::string nick = "mjpro";
+	std::string user = "mj_nick";
+	std::string channel = "#ch1";
+	std::string message = buf;
+
+	std::ostringstream cmd;
+	cmd //<< "NICK " << nick << "\r\n"
+		<< "USER " << user << "\r\n"
+	// 	// << "JOIN " << channel << "\r\n"
+		<< "PRIVMSG " << channel << " :" << message << "\r\n";
+	std::string cmd_str = cmd.str();
+	for (int i = 1; i < 1024; i++)
+	{
+		if (clients[i].fd != -1 && clients[i].fd != clientfd)
+		{
+			send(clients[i].fd, cmd_str.c_str(), cmd_str.size(), 0);
+			// std::cout << "Message: " << buf << std::endl;
+		}
+	}
+	// std::cout << "Message is as:" << message << "$\n";
+	// send(clientfd, buf, bytesRecv + 1, 0);
 	// }
 }
 
@@ -93,9 +117,8 @@ void acceptcall(int server, pollfd *client)
 {
 	for (int i = 0; i < 1024; i++)
 	{
-		if ((client[i].revents & POLLIN)) // fd is ready fo reading
+		if ((client[i].revents & POLLIN) == POLLIN) // fd is ready fo reading
 		{
-			std::cout << "came here\n";
 			if (client[i].fd == server) // request for new connection
 			{
 
@@ -141,16 +164,18 @@ void acceptcall(int server, pollfd *client)
 			}
 			else // data from an existing connection, recieve it
 			{
-				readinput(client[i].fd);
+				readinput(client[i].fd, client);
 			}
 		}
 	}
 }
 int main()
 {
+	signal(SIGINT, siginthandler);
+	signal(SIGQUIT, siginthandler);
 	struct pollfd clients[1024];
 	int server = createserver();
-
+	fd_global = server;
 	for (int i = 0; i < 1024; i++)
 	{
 		clients[i].fd = -1;
@@ -162,7 +187,7 @@ int main()
 	// TODO create mainloop here
 	while (1)
 	{
-		switch (poll(clients, 1024, 42000))
+		switch (poll(clients, 1024, 10000))
 		{
 		case 0:
 			std::cout << "Should not be possible" << std::endl;
@@ -179,6 +204,6 @@ int main()
 	}
 
 	// Close the listening socket
-	// close(server); //!should we close it ?
+	close(server); //! should we close it ?
 	return (0);
 }

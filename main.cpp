@@ -7,6 +7,7 @@
 #include <string.h>
 #include <string>
 #include <poll.h>
+#include <sstream>
 
 /* Create a socket */
 /*	-difference AF(adress family) and PF(protocol family) PF was intended to
@@ -80,7 +81,21 @@ void readinput(int clientfd)
 		}
 
 		// Send message
-		send(clientfd, buf, bytesRecv + 1, 0);
+		std::string nick = "you";
+		std::string user = "you";
+		std::string channel = "#test";
+		std::string message = buf;
+
+		std::ostringstream cmd;
+		cmd << "NICK " << nick << "\r\n"
+		<< "USER " << user << " 0 * :" << user << "\r\n"
+		<< "JOIN " << channel << "\r\n"
+		<< "PRIVMSG " << channel << " :" << message << "\r\n";
+		std::string cmd_str = cmd.str();
+
+		send(clientfd, cmd_str.c_str(), cmd_str.size(), 0);
+		// send(clientfd, buf, bytesRecv + 1, 0);
+		std::cout << "Message: " << buf << std::endl;
 		i++;
 	// }
 }
@@ -148,6 +163,7 @@ int main()
 	struct pollfd clients[1024];
 	int server = createserver();
 
+
 	for (int i = 0; i < 1024; i++)
 	{
 		clients[i].fd = -1;
@@ -176,6 +192,6 @@ int main()
 	}
 
 	// Close the listening socket
-	// close(server); //!should we close it ?
+	close(server); //!should we close it ?
 	return (0);
 }

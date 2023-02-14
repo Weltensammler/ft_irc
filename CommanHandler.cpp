@@ -19,16 +19,16 @@ void start(Client* client, const std::string& message)
 		}
 		try
 		{
-			Command *cmd = this->_commandos.at(cmd_name);
+			Command *cmd = this->_commandos.at(cmd_name); // where/when filled ?
 
 			std::vector<std::string> cmd_args;
 
 			std::string buffer;
-			std::stringstream s_stream_2(line.substr(cmd_name.length(), line.length())); // end of cmd_name till eol
+			std::stringstream s_stream_args(line.substr(cmd_name.length(), line.length())); // end of cmd_name till eol
 
-			while (ss >> buf) // read args of the cmd in; but where is delim ?
+			while (s_stream_args >> buffer) // read args of the cmd in as whole string;
 			{
-				cmd_args.push_back(buf);
+				cmd_args.push_back(buffer);
 			}
 
 

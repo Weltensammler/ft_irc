@@ -9,6 +9,11 @@
 #include <poll.h>
 #include <sstream>
 #include <signal.h>
+#include <vector>
+
+#include "user.hpp"
+
+
 int fd_global;
 void	siginthandler(int signum)
 {
@@ -59,7 +64,7 @@ int createserver(void)
 	return (listening);
 }
 
-void readinput(int clientfd, pollfd *clients)
+void readinput(int clientfd, pollfd *clients, vector<User> *userList)
 {
 	// While receiving display message, echo message
 	char buf[4096];
@@ -87,6 +92,12 @@ void readinput(int clientfd, pollfd *clients)
 		std::cout << "Received: " << std::string(buf, 0, bytesRecv) << std::endl;
 	}
 
+
+/* 	PSEUDOCODE PARSER: 
+		1. STRING is in BUF;
+		2. Send BUF to initParser(std::string* and clientlist)
+		3. ... finds out which commands have been requested; */
+
 	// Send message
 	// std::string nick = "mjpro";
 	std::string user = "mj_nick";
@@ -113,11 +124,11 @@ void readinput(int clientfd, pollfd *clients)
 }
 
 /* Accepting a call */
-void acceptcall(int server, pollfd *client)
+void acceptcall(int server, pollfd *client, vector<User> *userList)
 {
 	for (int i = 0; i < 1024; i++)
 	{
-		if ((client[i].revents & POLLIN) == POLLIN) // fd is ready fo reading
+		if ((client[i].revents & POLLIN) == POLLIN) // fd is ready for reading
 		{
 			if (client[i].fd == server) // request for new connection
 			{
@@ -154,8 +165,13 @@ void acceptcall(int server, pollfd *client)
 				if (j < 1024)
 				{
 					client[j].fd = userSocket;
-					client[j].events = POLLIN; //? do we need this line
+					client[j].events = POLLIN; 
 					client[j].revents = 0;
+					/* if (user already there -> iterate through userlist)
+						then assign fd to the user;
+					else */
+					User newUser(client[j].fd);
+					userList.push_back(newUser);
 				}
 				else
 				{
@@ -164,7 +180,7 @@ void acceptcall(int server, pollfd *client)
 			}
 			else // data from an existing connection, recieve it
 			{
-				readinput(client[i].fd, client);
+				readinput(client[i].fd, client, userList);
 			}
 		}
 	}
@@ -174,6 +190,7 @@ int main()
 	signal(SIGINT, siginthandler);
 	signal(SIGQUIT, siginthandler);
 	struct pollfd clients[1024];
+	std::vector<User> userList;
 	int server = createserver();
 	fd_global = server;
 	for (int i = 0; i < 1024; i++)
@@ -197,9 +214,10 @@ int main()
 			break;
 		default:
 			// std::cout << "begin of the default switch" << std::endl;
-			acceptcall(server, clients);
+			acceptcall(server, clients, &userList);
 			// readinput(clients);
 			break;
+		// if (something_time) -> ft_checkUserList(&userList); // every 30 secs the userlist is checked: it iterates through the list and checks if all data for connections is there;
 		}
 	}
 

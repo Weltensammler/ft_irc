@@ -15,21 +15,24 @@ public:
 	User&					operator=(const User &src);
 	~User();
 
-	int						setFd();
+	void					setFd(int new_fd);
 	int 					getFd() const;
+
+	void					setPass(std::string pass);
+	std::string				getPass() const;
 
 	void 					setNick(std::string nick); // set in lowercase / convert
 	std::string				getNick() const;
 
-	void					setUsername(const std::string &username);
-	const std::string		&getUsername() const;
+	void					setUsername(std::string username);
+	const std::string		getUsername() const;
 	
-	void					setRealname(const std::string &realname);
-	const std::string		&getRealname() const;
+	void					setRealname(std::string realname);
+	const std::string		getRealname() const;
 
 	void					addChannel(Channel *);
 	void					removeChannel(Channel *channel);
-	std::vector<Channel *>	&getChannels();
+	std::vector<Channel *>	getChannels();
 
 	bool					isOperator(); // server operator: channel operators are stored in channel object
 	void					setOperator();
@@ -38,9 +41,10 @@ private:
 	std::string				_nick;
 	int						_fd;
 	bool					_oper;
+	std::string				_pass;
 	std::string				_username;
 	std::string				_realname;
-	std::vector<Channel *>	_channels;
+	std::vector<Channel *>	_channels; // list of channels the user is part of for cross-exchanging data
 };
 
 #endif

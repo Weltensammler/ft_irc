@@ -10,10 +10,10 @@
 #include <sstream>
 #include <signal.h>
 int fd_global;
-void	siginthandler(int signum)
+void siginthandler(int signum)
 {
-close(fd_global);
-exit(1);
+	close(fd_global);
+	exit(1);
 }
 
 /* Create a socket */
@@ -96,12 +96,12 @@ void readinput(int clientfd, pollfd *clients)
 	std::ostringstream cmd;
 	cmd //<< "NICK " << nick << "\r\n"
 		<< "USER " << user << "\r\n"
-	// 	// << "JOIN " << channel << "\r\n"
+		// 	// << "JOIN " << channel << "\r\n"
 		<< "PRIVMSG " << channel << " :" << message << "\r\n";
 	std::string cmd_str = cmd.str();
 	for (int i = 1; i < 1024; i++)
 	{
-		if (clients[i].fd != -1 && clients[i].fd != clientfd)
+		if (clients[i].fd != -1)
 		{
 			send(clients[i].fd, cmd_str.c_str(), cmd_str.size(), 0);
 			// std::cout << "Message: " << buf << std::endl;
@@ -156,6 +156,11 @@ void acceptcall(int server, pollfd *client)
 					client[j].fd = userSocket;
 					client[j].events = POLLIN; //? do we need this line
 					client[j].revents = 0;
+					std::ostringstream cmd;
+					// cmd << "%C29*%O$tCapabilities acknowledged: %C29$2%O";
+					cmd << "%UChannel          mjpro   fun";
+					std::string cmd_str = cmd.str();
+					send(client[j].fd, cmd_str.c_str(), cmd_str.size(), 0);
 				}
 				else
 				{

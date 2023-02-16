@@ -35,7 +35,7 @@ class Server {
 	private:
 		void		createserver(void);
 		void		readinput(int clientfd, pollfd *clients, vector<User> *userList);
-		void		acceptcall(int server, pollfd *client, vector<User> *userList);
+		void		acceptcall();
 
 
 		std::string		_pass;

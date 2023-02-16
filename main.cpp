@@ -38,8 +38,8 @@ int main()
 	initClient();
 	ourServer.clients[0].fd = ourServer.fd_server;
 	ourServer.clients[0].events = POLLIN;
-	pollLoop();
-	// Close the listening socket
-	close(server); //! should we close it ?
+	ourServer.pollLoop();
+
+	close(ourServer.fd_server);
 	return (0);
 }

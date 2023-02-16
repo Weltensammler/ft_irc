@@ -4,6 +4,7 @@
 
 Server::Server(std::string serverPass, int port, std::string serverName): _pass(serverPass), _port(port), _serverName(serverName)
 {
+	this->userList = NULL;
 	std::cout << "Server Object Created" << std::endl;
 }
 
@@ -39,27 +40,22 @@ void Server::createserver(void)
 	this->fd_server = listening;
 }
 
-void Server::readinput(int clientfd, pollfd *clients)
+void Server::readinput(int client_no)
 {
-	// While receiving display message, echo message
 	char buf[4096];
 	int i = 0;
-	// while (i <= 10)
-	// {
-	// Clear the buffer
 	memset(buf, 0, 4096);
-	// Wait for a message
-	int bytesRecv = recv(clientfd, buf, 4096, 0);
+	int bytesRecv = recv(this->clients[client_no].fd, buf, 4096, 0);
 	if (bytesRecv == -1)
 	{
 		std::cerr << "There was a connection issue!" << std::endl;
 	}
 	else if (bytesRecv == 0)
 	{
-		if (close(clientfd) == -1)
+		if (close(this->clients[client_no].fd) == -1)
 			std::cerr << "close!" << std::endl;
 		std::cerr << "The Client disconnected!" << std::endl;
-		clientfd *= -1; // it will be ignored in future
+		this->clients[client_no].fd *= -1; // it will be ignored in future
 	}
 	else // data from client
 	{
@@ -93,13 +89,13 @@ void Server::readinput(int clientfd, pollfd *clients)
 }
 
 /* Accepting a call */
-void Server::acceptcall(int server, pollfd *client)
+void Server::acceptcall()
 {
 	for (int i = 0; i < 1024; i++)
 	{
-		if ((client[i].revents & POLLIN) == POLLIN) // fd is ready fo reading
+		if ((this->client[i].revents & POLLIN) == POLLIN) // fd is ready fo reading
 		{
-			if (client[i].fd == server) // request for new connection
+			if (this->client[i].fd == this->fd_server) // request for new connection
 			{
 
 				std::cout << "New Connection " << std::endl;
@@ -109,7 +105,7 @@ void Server::acceptcall(int server, pollfd *client)
 				char service[NI_MAXSERV];
 				memset(host, 0, NI_MAXHOST);
 				memset(service, 0, NI_MAXSERV);
-				int userSocket = accept(server, (sockaddr *)&user, &userSize);
+				int userSocket = accept(this->fd_server, (sockaddr *)&user, &userSize);
 				if (userSocket == -1)
 				{
 					std::cerr << "Problem with client connecting!" << std::endl;
@@ -127,6 +123,8 @@ void Server::acceptcall(int server, pollfd *client)
 					inet_ntop(AF_INET, &user.sin_addr, host, NI_MAXHOST);
 					std::cout << host << " connected on " << ntohs(user.sin_port) << std::endl;
 				}
+				// untill here
+				
 				int j = 0;
 				for (; j < 1024; j++)
 					if (client[j].fd == -1)
@@ -136,20 +134,28 @@ void Server::acceptcall(int server, pollfd *client)
 					client[j].fd = userSocket;
 					client[j].events = POLLIN; //? do we need this line
 					client[j].revents = 0;
+
+					User newUser(&client[j]);
+					this->userList.push_back(newUser);
+					
+					// Perhaps for Testing Puropses ??
 					std::ostringstream cmd;
 					// cmd << "%C29*%O$tCapabilities acknowledged: %C29$2%O";
 					cmd << "%UChannel          mjpro   fun";
 					std::string cmd_str = cmd.str();
 					send(client[j].fd, cmd_str.c_str(), cmd_str.size(), 0);
+					// untill here
+
 				}
 				else
 				{
+					std::cout << "Server Capacity for Clients is Full" << std::endl;
 					close(userSocket);
 				}
 			}
 			else // data from an existing connection, recieve it
 			{
-				readinput(client[i].fd, client);
+				this->readinput(i);
 			}
 		}
 	}
@@ -178,8 +184,7 @@ void	Server::pollLoop()
 			std::cout << "could not be possible" << std::endl;
 			break;
 		default:
-			// std::cout << "begin of the default switch" << std::endl;
-			this->acceptcall(this->fd_server,this->clients);
+			this->acceptcall();
 			// readinput(clients);
 			break;
 		}

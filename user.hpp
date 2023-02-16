@@ -3,7 +3,8 @@
 
 #include <string>
 #include <vector>
-#include "Channel.hpp"
+#include "channel.hpp"
+#include "server.hpp"
 
 class Channel;
 
@@ -45,6 +46,7 @@ private:
 	std::string				_username;
 	std::string				_realname;
 	std::vector<Channel *>	_channels; // list of channels the user is part of for cross-exchanging data
+	struct pollfd &_client;
 };
 
 #endif

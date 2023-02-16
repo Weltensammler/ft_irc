@@ -5,8 +5,13 @@ User::User() : _nick(std::string()), _fd(-1), _oper(false) {
 	std::cout << "Default user constructor called" << std::endl;
 }
 
-User::User(int new_fd) : _nick(std::string()), _fd(new_fd), _oper(false) {
-	std::cout << "Default user constructor called with FD input" << std::endl;
+User::User(struct pollfd &client) :  {
+	this->_client = client;
+	this->_fd = this->_client.fd;
+	// new _nick = size(char) * 9;
+	// this->_nick = NULL;
+	this->_oper = false;
+	std::cout << "Default user constructor called with Client Input" << std::endl;
 }
 
 User &User::operator=(const User &src) {
@@ -16,6 +21,7 @@ User &User::operator=(const User &src) {
 }
 
 User::~User() {
+	// delete _nick 
 	std::cout << "User deconstructor called" << std::endl;
 }
 

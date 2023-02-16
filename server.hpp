@@ -22,27 +22,24 @@ class Channel;
 class User;
 
 class Server {
-	private:
+	public:
 		Server();
 		~Server();
-		Server(std::string _pass, int _port, std::string _serverName);
+		Server(std::string pass, int port, std::string serverName);
+		// Server&					operator=(const Server &src);   // Copy Assigment Constructor
+
+		int				fd_server;
 
 	private:
+		int			createserver(void);
+		void		readinput(int clientfd, pollfd *clients, vector<User> *userList);
+		void		acceptcall(int server, pollfd *client, vector<User> *userList);
+
 		std::string		_pass;
 		int				_port;
 		std::string		_serverName;
-		
 		struct pollfd 			clients[1024];
-		std::vectorUser> 		userList;
+		std::vector<User> 		userList;
 		std::vector<Channel> 	channelList;
-
-	int createserver(void)
-	void readinput(int clientfd, pollfd *clients, vector<User> *userList)
-	void acceptcall(int server, pollfd *client, vector<User> *userList)
-
-
-
-
-
-
+}
 #endif

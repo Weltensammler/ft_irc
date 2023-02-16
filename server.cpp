@@ -12,37 +12,31 @@ Server::~Server()
 	std::cout << "Deconstructor Called" << std::endl;
 }
 
-int Server::createserver(void)
+void Server::createserver(void)
 {
 	int listening = socket(AF_INET, SOCK_STREAM, 0);
-	//? check what the sockets are
 	if (listening == -1)
 	{
 		std::cerr << "Can't create a socket!" << std::endl;
 		return (-1);
 	}
 	// TODO add setsockopt function and research
-	/* Bind the socket to a IP / Port */
-	/* INADDR_ANY is a macro to get the IP address of the host machine (server)
-	   you could also use inet_addr("127.0.0.1") to assign it manually */
 	sockaddr_in hint;
 	hint.sin_family = AF_INET;
 	hint.sin_addr.s_addr = htonl(INADDR_ANY);
 	// inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr);
-	hint.sin_port = htons(55000); // here we should do the byteorder network/host using htons and htonl
+	hint.sin_port = htons(55000); 
 	if (bind(listening, (sockaddr *)&hint, sizeof(hint)) == -1)
 	{
 		std::cerr << "Can't bind to IP/Port!" << std::endl;
 		return (-2);
 	}
-	// Mark the socket for listening in
 	if (listen(listening, SOMAXCONN) == -1)
 	{
 		std::cerr << "Can't listen!" << std::endl;
 		return (-3);
 	}
 	this->fd_server = listening;
-	return (listening);
 }
 
 void Server::readinput(int clientfd, pollfd *clients)
@@ -157,6 +151,37 @@ void Server::acceptcall(int server, pollfd *client)
 			{
 				readinput(client[i].fd, client);
 			}
+		}
+	}
+}
+
+void	Server::initClient()
+{
+	for (int i = 0; i < 1024; i++)
+	{
+		this->clients[i].fd = -1;
+		this->clients[i].events = 0;
+		this->clients[i].revents = 0;
+	}
+}
+
+void	Server::pollLoop()
+{
+	while (1)
+	{
+		switch (poll(this->clients, 1024, 10000))
+		{
+		case 0:
+			std::cout << "Should not be possible" << std::endl;
+			break;
+		case -1:
+			std::cout << "could not be possible" << std::endl;
+			break;
+		default:
+			// std::cout << "begin of the default switch" << std::endl;
+			this->acceptcall(this->fd_server,this->clients);
+			// readinput(clients);
+			break;
 		}
 	}
 }

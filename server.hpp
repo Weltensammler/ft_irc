@@ -27,13 +27,16 @@ class Server {
 		~Server();
 		Server(std::string pass, int port, std::string serverName);
 		// Server&					operator=(const Server &src);   // Copy Assigment Constructor
+		void	Server::initClient();
+		void	Server::pollLoop();
 
 		int				fd_server;
 
 	private:
-		int			createserver(void);
+		void		createserver(void);
 		void		readinput(int clientfd, pollfd *clients, vector<User> *userList);
 		void		acceptcall(int server, pollfd *client, vector<User> *userList);
+
 
 		std::string		_pass;
 		int				_port;

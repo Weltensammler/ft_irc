@@ -191,6 +191,7 @@ int main()
 	signal(SIGQUIT, siginthandler);
 	struct pollfd clients[1024];
 	std::vector<User> userList;
+	std::vector<Channel> channelList;
 	int server = createserver();
 	fd_global = server;
 	for (int i = 0; i < 1024; i++)

@@ -6,7 +6,9 @@
 #include <string>
 #include "Command.hpp"
 #include <map>
+#include "Client.hpp"
 
+class Client;
 class Command;
 
 class CommandHandler
@@ -19,6 +21,8 @@ class CommandHandler
 		CommandHandler(const CommandHandler& obj);
 		CommandHandler& operator=(const CommandHandler& obj);
 		~CommandHandler();
+
+		void start(Client* client, const std::string& message);
 
 
 };

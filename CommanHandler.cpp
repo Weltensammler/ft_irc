@@ -2,8 +2,10 @@
 
 /*
 * getline(): gets a line until delimitor;
+* message: the message read in by the servers file descriptor
+* client needs to be initizalied with the fd of the server
 */
-void start(Client* client, const std::string& message)
+void CommandHandler::start(Client* client, const std::string& message) // client = user
 {
 	std::string line;
 	std::stringstream s_stream(message);
@@ -31,12 +33,16 @@ void start(Client* client, const std::string& message)
 				cmd_args.push_back(buffer);
 			}
 
-
-
+			if (client->is_registered() == false && command->authy_needed() == true)
+			{
+				client->reply(ERR_NOTREGISTERED(client->getNick())); // errormsg from documentation
+				return;
+			}
+			cmd->execute(client, args);
 		}
-		catch ()
+		catch (const std::out_of_range& e) // thrown by vector or string
 		{
-
+			client->reply(ERR_UNKNOWNCOMMAND(client->getNick(), cmd_name));
 		}
 	}
 }

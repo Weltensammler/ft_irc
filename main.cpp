@@ -10,9 +10,12 @@
 #include <sstream>
 #include <signal.h>
 int fd_global;
-void siginthandler(int signum)
+void my_handler(int s)
 {
-	close(fd_global);
+	for (size_t i = 0; i < 1024; i++)
+	{
+		close(fd_global + i);
+	}
 	exit(1);
 }
 
@@ -88,16 +91,17 @@ void readinput(int clientfd, pollfd *clients)
 	}
 
 	// Send message
-	// std::string nick = "mjpro";
-	std::string user = "mj_nick";
+	std::string nick = "mjpro";
+	std::string user = "mjpro";
 	std::string channel = "#ch1";
 	std::string message = buf;
 
 	std::ostringstream cmd;
 	cmd //<< "NICK " << nick << "\r\n"
-		<< "USER " << user << "\r\n"
-		// 	// << "JOIN " << channel << "\r\n"
-		<< "PRIVMSG " << channel << " :" << message << "\r\n";
+		//<< "USER " << user << "\r\n"
+		//<< "JOIN " << channel << "\r\n"
+		<< user << "PRIVMSG " << user << " :" << message << "\r\n";
+	// << ":Welcome to the Internet Relay Network borja!borja@polaris.cs.uchicago.edu";
 	std::string cmd_str = cmd.str();
 	for (int i = 1; i < 1024; i++)
 	{
@@ -156,11 +160,7 @@ void acceptcall(int server, pollfd *client)
 					client[j].fd = userSocket;
 					client[j].events = POLLIN; //? do we need this line
 					client[j].revents = 0;
-					std::ostringstream cmd;
-					// cmd << "%C29*%O$tCapabilities acknowledged: %C29$2%O";
-					cmd << "%UChannel          mjpro   fun";
-					std::string cmd_str = cmd.str();
-					send(client[j].fd, cmd_str.c_str(), cmd_str.size(), 0);
+					readinput(client[i].fd, client);
 				}
 				else
 				{
@@ -176,11 +176,16 @@ void acceptcall(int server, pollfd *client)
 }
 int main()
 {
-	signal(SIGINT, siginthandler);
-	signal(SIGQUIT, siginthandler);
+	struct sigaction sigIntHandler;
+
 	struct pollfd clients[1024];
 	int server = createserver();
 	fd_global = server;
+	sigIntHandler.sa_handler = my_handler;
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigIntHandler.sa_flags = 0;
+
+	sigaction(SIGINT, &sigIntHandler, NULL);
 	for (int i = 0; i < 1024; i++)
 	{
 		clients[i].fd = -1;
@@ -192,7 +197,7 @@ int main()
 	// TODO create mainloop here
 	while (1)
 	{
-		switch (poll(clients, 1024, 10000))
+		switch (poll(clients, 1024, 42000))
 		{
 		case 0:
 			std::cout << "Should not be possible" << std::endl;

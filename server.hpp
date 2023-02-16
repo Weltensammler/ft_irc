@@ -1,7 +1,6 @@
 #ifndef SERVER_HPP
  #define SERVER_HPP
 
-
 #include <iostream>
 #include <sys/types.h>
 #include <unistd.h>
@@ -16,7 +15,7 @@
 #include <vector>
 
 #include "user.hpp"
-#include "channel.hpp"
+/* #include "channel.hpp" */
 
 class Channel;
 class User;
@@ -25,24 +24,26 @@ class Server {
 	public:
 		Server();
 		~Server();
-		Server(std::string pass, int port, std::string serverName);
+		Server(std::string pass, int port);
 		// Server&					operator=(const Server &src);   // Copy Assigment Constructor
-		void	Server::initClient();
-		void	Server::pollLoop();
 
-		int				fd_server;
+		void		createServer();
+		void		initClient();
+		void		pollLoop();
+
+		int						fd_server;
+		struct pollfd 			clients[1024];
 
 	private:
-		void		createserver(void);
-		void		readinput(int clientfd, pollfd *clients, vector<User> *userList);
-		void		acceptcall();
+		void		readInput(int client_no);
+		void		acceptCall();
 
 
-		std::string		_pass;
-		int				_port;
-		std::string		_serverName;
-		struct pollfd 			clients[1024];
-		std::vector<User> 		userList;
-		std::vector<Channel> 	channelList;
-}
+		int						_port;
+		std::string				_pass;
+		std::string				_serverName;
+		std::vector<User*> 		userList;
+		std::vector<Channel*> 	channelList;
+};
+
 #endif

@@ -2,9 +2,8 @@
 #include "server.hpp"
 
 
-Server::Server(std::string serverPass, int port, std::string serverName): _pass(serverPass), _port(port), _serverName(serverName)
+Server::Server(std::string serverPass, int port): _pass(serverPass), _port(port)
 {
-	this->userList = NULL;
 	std::cout << "Server Object Created" << std::endl;
 }
 
@@ -13,34 +12,34 @@ Server::~Server()
 	std::cout << "Deconstructor Called" << std::endl;
 }
 
-void Server::createserver(void)
+void Server::createServer(void)
 {
 	int listening = socket(AF_INET, SOCK_STREAM, 0);
 	if (listening == -1)
 	{
 		std::cerr << "Can't create a socket!" << std::endl;
-		return (-1);
+		/* return (-1); */ // as of now the f.return type is void, we removed this; has to be resculptured;
 	}
 	// TODO add setsockopt function and research
 	sockaddr_in hint;
 	hint.sin_family = AF_INET;
 	hint.sin_addr.s_addr = htonl(INADDR_ANY);
 	// inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr);
-	hint.sin_port = htons(55000); 
+	hint.sin_port = htons(this->_port);
 	if (bind(listening, (sockaddr *)&hint, sizeof(hint)) == -1)
 	{
 		std::cerr << "Can't bind to IP/Port!" << std::endl;
-		return (-2);
+		/* return (-2); */
 	}
 	if (listen(listening, SOMAXCONN) == -1)
 	{
 		std::cerr << "Can't listen!" << std::endl;
-		return (-3);
+		/* return (-3); */
 	}
 	this->fd_server = listening;
 }
 
-void Server::readinput(int client_no)
+void Server::readInput(int client_no)
 {
 	char buf[4096];
 	int i = 0;
@@ -89,13 +88,13 @@ void Server::readinput(int client_no)
 }
 
 /* Accepting a call */
-void Server::acceptcall()
+void Server::acceptCall()
 {
 	for (int i = 0; i < 1024; i++)
 	{
-		if ((this->client[i].revents & POLLIN) == POLLIN) // fd is ready fo reading
+		if ((this->clients[i].revents & POLLIN) == POLLIN) // fd is ready fo reading
 		{
-			if (this->client[i].fd == this->fd_server) // request for new connection
+			if (this->clients[i].fd == this->fd_server) // request for new connection
 			{
 
 				std::cout << "New Connection " << std::endl;
@@ -127,23 +126,23 @@ void Server::acceptcall()
 				
 				int j = 0;
 				for (; j < 1024; j++)
-					if (client[j].fd == -1)
+					if (clients[j].fd == -1)
 						break;
 				if (j < 1024)
 				{
-					client[j].fd = userSocket;
-					client[j].events = POLLIN; //? do we need this line
-					client[j].revents = 0;
+					clients[j].fd = userSocket;
+					clients[j].events = POLLIN; //? do we need this line
+					clients[j].revents = 0;
 
-					User newUser(&client[j]);
-					this->userList.push_back(newUser);
+					User newUser(clients[j]);
+					this->userList.push_back(&newUser);
 					
 					// Perhaps for Testing Puropses ??
 					std::ostringstream cmd;
 					// cmd << "%C29*%O$tCapabilities acknowledged: %C29$2%O";
 					cmd << "%UChannel          mjpro   fun";
 					std::string cmd_str = cmd.str();
-					send(client[j].fd, cmd_str.c_str(), cmd_str.size(), 0);
+					send(clients[j].fd, cmd_str.c_str(), cmd_str.size(), 0);
 					// untill here
 
 				}
@@ -155,7 +154,7 @@ void Server::acceptcall()
 			}
 			else // data from an existing connection, recieve it
 			{
-				this->readinput(i);
+				this->readInput(i);
 			}
 		}
 	}
@@ -184,7 +183,7 @@ void	Server::pollLoop()
 			std::cout << "could not be possible" << std::endl;
 			break;
 		default:
-			this->acceptcall();
+			this->acceptCall();
 			// readinput(clients);
 			break;
 		}

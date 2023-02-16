@@ -3,7 +3,9 @@ CFLAGS		= -Wall -Werror -Wextra -std=c++98 #-g -Og
 RM			= rm -f
 NAME		= irc
 
-SRC			= main.cpp
+SRC			= main.cpp \
+				server.cpp \
+				user.cpp
 
 OBJ			= $(SRC:cpp=o)
 

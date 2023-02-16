@@ -1,17 +1,27 @@
 #ifndef USER_HPP
  #define USER_HPP
 
+#include <iostream>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <string.h>
+#include <poll.h>
+#include <sstream>
+// #include <signal.h>
 #include <string>
 #include <vector>
-#include "channel.hpp"
+/* #include "channel.hpp" */
 #include "server.hpp"
 
 class Channel;
 
 class User {
 public:
-	User();
-	User(int);
+	/* User(); */
+	User(pollfd &client);
 	/* User(User &src); */ // can't make copy, because all users have to be unique?
 	User&					operator=(const User &src);
 	~User();
@@ -26,17 +36,17 @@ public:
 	std::string				getNick() const;
 
 	void					setUsername(std::string username);
-	const std::string		getUsername() const;
+	std::string				getUsername() const;
 	
 	void					setRealname(std::string realname);
-	const std::string		getRealname() const;
+	std::string				getRealname() const;
 
-	void					addChannel(Channel *);
+/* 	void					addChannel(Channel *);
 	void					removeChannel(Channel *channel);
 	std::vector<Channel *>	getChannels();
 
 	bool					isOperator(); // server operator: channel operators are stored in channel object
-	void					setOperator();
+	void					setOperator(); */
 
 private:
 	std::string				_nick;
@@ -46,7 +56,7 @@ private:
 	std::string				_username;
 	std::string				_realname;
 	std::vector<Channel *>	_channels; // list of channels the user is part of for cross-exchanging data
-	struct pollfd &_client;
+	struct pollfd &			_client;
 };
 
 #endif

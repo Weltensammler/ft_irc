@@ -1,11 +1,14 @@
 #include <iostream>
+#include <algorithm>
 #include "user.hpp"
+#include "server.hpp"
 
-User::User() : _nick(std::string()), _fd(-1), _oper(false) {
+/* User::User() {
+	this->_client;
 	std::cout << "Default user constructor called" << std::endl;
-}
+} */
 
-User::User(struct pollfd &client) :  {
+User::User(pollfd &client) : _client(client) {
 	this->_client = client;
 	this->_fd = this->_client.fd;
 	// new _nick = size(char) * 9;
@@ -29,7 +32,7 @@ void	User::setFd(int new_fd) {
 	this->_fd = new_fd;
 }
 
-int	User::getFd() {
+int	User::getFd() const {
 	return (this->_fd);
 }
 
@@ -47,7 +50,7 @@ void	User::setNick(std::string nick) {
 	this->_nick = nick;
 }
 
-int	User::getNick() {
+std::string	User::getNick() const {
 	return (this->_nick);
 }
 
@@ -55,7 +58,7 @@ void	User::setUsername(std::string username) {
 	this->_username = username;
 }
 
-int	User::getUsername() {
+std::string	User::getUsername() const {
 	return (this->_username);
 }
 
@@ -63,7 +66,7 @@ void	User::setRealname(std::string realname) {
 	this->_username = realname;
 }
 
-int	User::getRealname() {
+std::string	User::getRealname() const {
 	return (this->_realname);
 }
 

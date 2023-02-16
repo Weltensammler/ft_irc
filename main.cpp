@@ -14,28 +14,28 @@
 
 // int fd_global;
 
-void siginthandler(int signum)
+/* void siginthandler(int signum)
 {
 	close(ourSever.ft_server);
 	exit(1);
-}
+} */
 
-int main()
+int main(int argc, char** argv)
 {
-	if (argc != 4)
+	if (argc != 3)
 	{
-		std::cout << "Please enter the right amount of arguments" << std::endl
+		std::cout << "Please enter the right amount of arguments" << std::endl;
 	}
 	std::string serverPass(argv[1]);
 	int	port = atoi(argv[2]);
-	std::string serverName(argv[3]);
+/* 	std::string serverName(argv[3]); */
 
-	Server ourServer(serverPass, port, serverName);
-    ourServer.createserver();
+	Server ourServer(serverPass, port);
+    ourServer.createServer();
 	// fd_global = ourServer.fd_server;
-	signal(SIGINT, siginthandler);
-	signal(SIGQUIT, siginthandler);
-	initClient();
+	/* signal(SIGINT, siginthandler);
+	signal(SIGQUIT, siginthandler); */
+	ourServer.initClient();
 	ourServer.clients[0].fd = ourServer.fd_server;
 	ourServer.clients[0].events = POLLIN;
 	ourServer.pollLoop();

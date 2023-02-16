@@ -88,7 +88,9 @@ void    sendReply(User const & user, User const & target, int userSocket, int re
         case ERR_CHANOPRIVSNEEDED:
             msg += channel.getName() + " :You're not channel operator\r\n";
             break;
-
+        case ERR_CANTKILLSERVER:
+            msg += ":You can't kill a server!\r\n";
+            break;
     }
     send(userSocket, msg.c_str(), msg.size(), 0);
 }

@@ -55,7 +55,7 @@
 # define ERR_NOTEXTTOSEND		412
 # define ERR_NOTOPLEVEL			413
 # define ERR_WILDTOPLEVEL		414
-# define ERR_UNKNOWNCOMMAND		421
+# define ERR_UNKNOWNCOMMAND(cmd_name)		"421 " + cmd_name + ":Unknown command"
 # define ERR_NOMOTD				422
 # define ERR_NOADMININFO		423
 # define ERR_FILEERROR			424
@@ -69,7 +69,7 @@
 # define ERR_NOLOGIN			444
 # define ERR_SUMMONDISABLED		445
 # define ERR_USERSDISABLED		446
-# define ERR_NOTREGISTERED		451
+# define ERR_NOTREGISTERED(_nick)		"451 " + _nick + " :You have not registered"
 # define ERR_NEEDMOREPARAMS		461
 # define ERR_ALREADYREGISTRED	462
 # define ERR_NOPERMFORHOST		463

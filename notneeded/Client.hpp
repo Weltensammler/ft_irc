@@ -2,14 +2,21 @@
 # define CLIENT_HPP
 
 #include <iostream>
+#include <vector>
+#include <string>
+#include <sys/poll.h>
+#include <sys/socket.h>
 
-class CLient
+enum ClientStatus
+{
+	HANDSHAKE, LOGIN, PLAY, DISCONNECT
+};
+
+class Client
 {
 	private:
-		std::string _nick;
-		std::string _user;
-		std::string _realname;
-		std::string _hostname;
+		std::string 
+		
 
 
 	public:
@@ -22,7 +29,13 @@ class CLient
 		const std::string& getUser() const;
 		const std::string& getHostname() const;
 		const std::string& getRealname() const;
-		void reply()
+		void reply(const std::string& reply_msg);
+
+		bool is_registered() const
+		{
+
+		};
+		bool authy_needed();
 	
 
 }

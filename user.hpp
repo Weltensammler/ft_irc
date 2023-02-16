@@ -41,6 +41,11 @@ public:
 	void					setRealname(std::string realname);
 	std::string				getRealname() const;
 
+	void					joinChannel(); // makes user join a channel; prompts server to send message to all relevant users about joining; 
+	void					leaveChannel(); // also sends message that user left channel;
+	void					createChannel(); // ourUser.createChannel() _ creates new channel, and user is made operator;
+	void					removeChannel();
+
 /* 	void					addChannel(Channel *);
 	void					removeChannel(Channel *channel);
 	std::vector<Channel *>	getChannels();

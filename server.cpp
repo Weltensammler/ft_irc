@@ -1,4 +1,4 @@
-
+#include <errno.h>
 #include "server.hpp"
 
 
@@ -29,6 +29,7 @@ void Server::createServer(void)
 	if (bind(listening, (sockaddr *)&hint, sizeof(hint)) == -1)
 	{
 		std::cerr << "Can't bind to IP/Port!" << std::endl;
+		std::cerr << errno << std::endl;
 		/* return (-2); */
 	}
 	if (listen(listening, SOMAXCONN) == -1)
@@ -62,6 +63,9 @@ void Server::readInput(int client_no)
 		std::cout << "Received: " << std::string(buf, 0, bytesRecv) << std::endl;
 	}
 
+
+	// WORK WITH BUFFER AFTER PARSING
+
 	// Send message
 	// std::string nick = "mjpro";
 	std::string user = "mj_nick";
@@ -94,6 +98,7 @@ void Server::acceptCall()
 	{
 		if ((this->clients[i].revents & POLLIN) == POLLIN) // fd is ready fo reading
 		{
+			std::cout << "this client i fd is: " << this->clients[i].fd << "\n and this fd_server is: " << this->fd_server << std::endl;
 			if (this->clients[i].fd == this->fd_server) // request for new connection
 			{
 
@@ -134,8 +139,9 @@ void Server::acceptCall()
 					clients[j].events = POLLIN; //? do we need this line
 					clients[j].revents = 0;
 
-					User newUser(clients[j]);
-					this->userList.push_back(&newUser);
+					User	*newUser = new User(clients[j]);
+					/* User newUser(clients[j]); */
+					this->userList.push_back(newUser);
 					
 					// Perhaps for Testing Puropses ??
 					std::ostringstream cmd;

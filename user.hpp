@@ -41,6 +41,8 @@ public:
 	void					setRealname(std::string realname);
 	std::string				getRealname() const;
 
+	bool					isRegistered();
+
 	void					joinChannel(); // makes user join a channel; prompts server to send message to all relevant users about joining; 
 	void					leaveChannel(); // also sends message that user left channel;
 	void					createChannel(); // ourUser.createChannel() _ creates new channel, and user is made operator;
@@ -57,6 +59,7 @@ private:
 	std::string				_nick;
 	int						_fd;
 	bool					_oper;
+	bool					_isRegistered;
 	std::string				_pass;
 	std::string				_username;
 	std::string				_realname;

@@ -70,3 +70,6 @@ std::string	User::getRealname() const {
 	return (this->_realname);
 }
 
+bool	User::isRegistered() {
+	return (this->_isRegistered);
+}

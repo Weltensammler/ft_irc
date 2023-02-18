@@ -35,6 +35,8 @@ class Server {
 		int						fd_server;
 		struct pollfd 			clients[1024];
 
+		Channel*				getChannel(const std::string& channel_name);
+
 		
 
 	private:

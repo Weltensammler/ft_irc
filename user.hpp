@@ -49,6 +49,11 @@ public:
 	void					createChannel(); // ourUser.createChannel() _ creates new channel, and user is made operator;
 	void					removeChannel();
 
+	void					execute_join_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
+	void					reply(const std::string& reply_msg);
+	std::string 			getPrefix() const;
+	void 					write_msg(const std::string& msg) const;
+
 	time_t					getTime(); // returns actual time of call (used for Ping)
 
 /* 	void					addChannel(Channel *);

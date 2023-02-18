@@ -30,11 +30,20 @@ public:
 	std::vector<User*>		getOperators();
 	void					setOperator();
 
+	const std::string&		getName();
+	size_t					getMaxClients() const;
+	size_t					getClientCount() const;
+	void					addUser(User* user);
+	void					notify_others(const std::string& msg, User* skip);
+
 	std::string				channelName;
 
 private:
 	std::vector<User*> 		_operatorList;
 	std::vector<User*> 		_userLogList; // all users joined the channel
+
+	size_t max_clients;
+	size_t count_clients;
 };
 
 #endif

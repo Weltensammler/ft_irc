@@ -199,3 +199,22 @@ void	Server::pollLoop()
 		}
 	}
 }
+
+Channel* Server::getChannel(const std::string& channel_name)
+{
+	std::vector<Channel*>::iterator start = this->_channels.begin();
+	std::vector<Channel*>::iterator end = this->_channels.end();
+
+	while (start != end)
+	{
+		if (channel_name.compare((*start)->getName()) == 0)
+		{
+			return ((*start));
+		}
+		start++;
+	}
+
+	std::cout << "no channel found: returning NULL*" << std::endl;
+	return (NULL);
+}
+

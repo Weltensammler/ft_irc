@@ -35,6 +35,8 @@ class Server {
 		int						fd_server;
 		struct pollfd 			clients[1024];
 
+		
+
 	private:
 		void					readInput(int client_no);
 		void					acceptCall();
@@ -45,6 +47,8 @@ class Server {
 		std::string				_serverName;
 		std::vector<User*> 		userList;
 		std::vector<Channel*> 	channelList;
+
+		std::vector<std::string>	parseIncomingMsg(std::string buffer);
 };
 
 #endif

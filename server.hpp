@@ -30,13 +30,14 @@ class Server {
 		void		createServer();
 		void		initClient();
 		void		pollLoop();
+		void		pingClient();
 
 		int						fd_server;
 		struct pollfd 			clients[1024];
 
 	private:
-		void		readInput(int client_no);
-		void		acceptCall();
+		void					readInput(int client_no);
+		void					acceptCall();
 
 
 		int						_port;

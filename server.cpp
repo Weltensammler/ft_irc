@@ -64,6 +64,8 @@ void Server::readInput(int client_no)
 	}
 
 
+	// return (std::string(buf, 0, bytesRecv)); // returning buffer as string to use the output for pong responce from client
+
 	// WORK WITH BUFFER AFTER PARSING
 
 	// Send message
@@ -190,6 +192,7 @@ void	Server::pollLoop()
 			break;
 		default:
 			this->acceptCall();
+			pingClient();
 			// readinput(clients);
 			break;
 		}

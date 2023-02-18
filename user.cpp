@@ -73,3 +73,7 @@ std::string	User::getRealname() const {
 bool	User::isRegistered() {
 	return (this->_isRegistered);
 }
+
+time_t	User::getTime() {
+	return (std::time(NULL));
+}

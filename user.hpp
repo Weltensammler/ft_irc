@@ -10,6 +10,7 @@
 #include <string.h>
 #include <poll.h>
 #include <sstream>
+#include <ctime>
 // #include <signal.h>
 #include <string>
 #include <vector>
@@ -47,6 +48,8 @@ public:
 	void					leaveChannel(); // also sends message that user left channel;
 	void					createChannel(); // ourUser.createChannel() _ creates new channel, and user is made operator;
 	void					removeChannel();
+
+	time_t					getTime(); // returns actual time of call (used for Ping)
 
 /* 	void					addChannel(Channel *);
 	void					removeChannel(Channel *channel);

@@ -62,7 +62,11 @@ void Server::readInput(int client_no)
 		// Display message
 		std::cout << "Received: " << std::string(buf, 0, bytesRecv) << std::endl;
 	}
-
+	//parsing buffer to vector of two string elements
+		//first element is prefix or empty
+		//second element is always Command and Parameters to it
+	std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
+	
 	// WORK WITH BUFFER AFTER PARSING
 
 	// Send message

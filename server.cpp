@@ -66,7 +66,7 @@ void Server::readInput(int client_no)
 		//first element is prefix or empty
 		//second element is always Command and Parameters to it
 	std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
-	
+
 	// WORK WITH BUFFER AFTER PARSING
 
 	// Send message
@@ -193,7 +193,7 @@ void	Server::pollLoop()
 			break;
 		default:
 			this->acceptCall();
-			pingClient();
+			// pingClient();
 			// readinput(clients);
 			break;
 		}

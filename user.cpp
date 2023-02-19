@@ -3,7 +3,7 @@
 #include "user.hpp"
 #include "server.hpp"
 
-User::User(pollfd &client, sockaddr_in newUserData) : _client(client), _userIpPort(newUserData) {
+User::User(pollfd &client, char* host, char* service) : _client(client), _host(host), _service(service) {
 	this->_fd = this->_client.fd;
 	this->_userState = UNAUTHORIZED;
 	this->_creationTime = std::time(NULL);

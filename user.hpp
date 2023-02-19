@@ -71,6 +71,8 @@ public:
 private:
 	std::string				_nick;
 	int						_fd;
+	char*					_host;
+	char*					_service;
 	int						_userState;
 	bool					_isRegistered;
 	time_t					_creationTime;
@@ -78,7 +80,6 @@ private:
 	std::string				_realname;
 	std::vector<Channel *>	_channels; // list of channels the user is part of for cross-exchanging data
 	struct pollfd &			_client; 
-	struct sockaddr_in		_userIpPort;
 };
 
 #endif

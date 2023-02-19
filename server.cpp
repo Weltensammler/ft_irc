@@ -74,7 +74,7 @@ void Server::readInput(int client_no)
 	//parsing buffer to vector of two string elements
 		//first element is prefix or empty
 		//second element is always Command and Parameters to it
-		
+
 	//std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
 
 	// WORK WITH BUFFER AFTER PARSING
@@ -152,8 +152,10 @@ void Server::acceptCall()
 					clients[j].events = POLLIN; //? do we need this line
 					clients[j].revents = 0;
 
-					User	*newUser = new User(clients[j], user);
-					this->_userList.push_back(newUser);
+					/* if (..)
+					else */ 
+						User	*newUser = new User(clients[j], host, service);
+						this->_userList.push_back(newUser);
 					
 					// Testing ---
 					std::ostringstream cmd;

@@ -27,7 +27,7 @@ class Channel;
 
 class User {
 public:
-	User(pollfd &client, sockaddr_in newUserData);
+	User(pollfd &client, char *host, char *service);
 	User&					operator=(const User &src);
 	~User();
 

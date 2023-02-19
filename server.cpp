@@ -12,6 +12,14 @@ Server::~Server()
 	std::cout << "Deconstructor Called" << std::endl;
 }
 
+void	Server::setPass(std::string pass) {
+	this->_pass = pass;
+}
+
+std::string	Server::getPass() const {
+	return (this->_pass);
+}
+
 void Server::createServer(void)
 {
 	int listening = socket(AF_INET, SOCK_STREAM, 0);

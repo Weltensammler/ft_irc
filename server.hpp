@@ -32,6 +32,9 @@ class Server {
 		void		pollLoop();
 		void		pingClient();
 
+		void					setPass(std::string pass);
+		std::string				getPass() const;
+
 		int						fd_server;
 		struct pollfd 			clients[1024];
 

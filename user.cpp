@@ -36,15 +36,6 @@ int	User::getFd() const {
 	return (this->_fd);
 }
 
-void	User::setPass(std::string pass) {
-	this->_pass = pass;
-}
-
-std::string	User::getPass() const {
-	return (this->_pass);
-}
-
-
 void	User::setNick(std::string nick) {
 	std::transform(nick.begin(), nick.end(), nick.begin(), ::tolower); // sure that tolower won't create problems like this later?
 	this->_nick = nick;

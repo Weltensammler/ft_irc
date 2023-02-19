@@ -40,6 +40,7 @@ public:
 
 private:
 	std::vector<User*> 		_operatorList;
+	std::string				_creatorUser;
 	std::vector<User*> 		_userLogList; // all users joined the channel
 
 	size_t max_clients;

@@ -17,6 +17,10 @@
 /* #include "channel.hpp" */
 #include "server.hpp"
 
+#define IDLE 1
+#define DISCONNECTED 2
+#define CONNECTED 3
+
 class Channel;
 
 class User {
@@ -30,9 +34,6 @@ public:
 	void					setFd(int new_fd);
 	int 					getFd() const;
 
-	void					setPass(std::string pass);
-	std::string				getPass() const;
-
 	void 					setNick(std::string nick); // set in lowercase / convert
 	std::string				getNick() const;
 
@@ -41,6 +42,9 @@ public:
 	
 	void					setRealname(std::string realname);
 	std::string				getRealname() const;
+
+	void					setState();
+	std::string				getState(); // have to be added in user.cpp
 
 	bool					isRegistered();
 
@@ -56,19 +60,16 @@ public:
 
 	time_t					getTime(); // returns actual time of call (used for Ping)
 
-/* 	void					addChannel(Channel *);
-	void					removeChannel(Channel *channel);
 	std::vector<Channel *>	getChannels();
 
 	bool					isOperator(); // server operator: channel operators are stored in channel object
-	void					setOperator(); */
+	void					setOperator();
 
 private:
 	std::string				_nick;
 	int						_fd;
 	bool					_oper;
 	bool					_isRegistered;
-	std::string				_pass;
 	std::string				_username;
 	std::string				_realname;
 	std::vector<Channel *>	_channels; // list of channels the user is part of for cross-exchanging data

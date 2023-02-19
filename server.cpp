@@ -48,6 +48,7 @@ void Server::createServer(void)
 	this->fd_server = listening;
 }
 
+//comented out to compile and work on authentification
 void Server::readInput(int client_no)
 {
 	char buf[4096];
@@ -73,7 +74,8 @@ void Server::readInput(int client_no)
 	//parsing buffer to vector of two string elements
 		//first element is prefix or empty
 		//second element is always Command and Parameters to it
-	std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
+		
+	//std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
 
 	// WORK WITH BUFFER AFTER PARSING
 
@@ -150,17 +152,16 @@ void Server::acceptCall()
 					clients[j].events = POLLIN; //? do we need this line
 					clients[j].revents = 0;
 
-					User	*newUser = new User(clients[j]);
-					/* User newUser(clients[j]); */
-					this->userList.push_back(newUser);
+					User	*newUser = new User(clients[j], user);
+					this->_userList.push_back(newUser);
 					
-					// Perhaps for Testing Puropses ??
+					// Testing ---
 					std::ostringstream cmd;
 					// cmd << "%C29*%O$tCapabilities acknowledged: %C29$2%O";
 					cmd << "%UChannel          mjpro   fun";
 					std::string cmd_str = cmd.str();
 					send(clients[j].fd, cmd_str.c_str(), cmd_str.size(), 0);
-					// untill here
+					// --- until here
 
 				}
 				else
@@ -208,10 +209,10 @@ void	Server::pollLoop()
 	}
 }
 
-Channel* Server::getChannel(const std::string& channel_name)
+/* Channel* Server::getChannel(const std::string& channel_name)
 {
-	std::vector<Channel*>::iterator start = this->_channels.begin();
-	std::vector<Channel*>::iterator end = this->_channels.end();
+	std::vector<Channel*>::iterator start = this->_channelList.begin();
+	std::vector<Channel*>::iterator end = this->_channelList.end();
 
 	while (start != end)
 	{
@@ -224,5 +225,5 @@ Channel* Server::getChannel(const std::string& channel_name)
 
 	std::cout << "no channel found: returning NULL*" << std::endl;
 	return (NULL);
-}
+} */
 

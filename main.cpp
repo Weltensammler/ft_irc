@@ -26,8 +26,8 @@ int main(int argc, char** argv)
 	{
 		std::cout << "Please enter the right amount of arguments" << std::endl;
 	}
-	std::string serverPass(argv[1]);
-	int	port = atoi(argv[2]);
+	int	port = atoi(argv[1]);
+	std::string serverPass(argv[2]);
 /* 	std::string serverName(argv[3]); */
 
 	Server ourServer(serverPass, port);

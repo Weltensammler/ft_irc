@@ -7,6 +7,19 @@
 #include <string.h>
 #include <string>
 #include <poll.h>
+#include <sstream>
+#include <signal.h>
+#include <vector>
+
+#include "user.hpp"
+
+
+int fd_global;
+void	siginthandler(int signum)
+{
+close(fd_global);
+exit(1);
+}
 
 /* Create a socket */
 /*	-difference AF(adress family) and PF(protocol family) PF was intended to
@@ -51,48 +64,72 @@ int createserver(void)
 	return (listening);
 }
 
-void readinput(int clientfd)
+void readinput(int clientfd, pollfd *clients, vector<User> *userList)
 {
 	// While receiving display message, echo message
 	char buf[4096];
 	int i = 0;
 	// while (i <= 10)
 	// {
-		// Clear the buffer
-		memset(buf, 0, 4096);
-		// Wait for a message
-		int bytesRecv = recv(clientfd, buf, 4096, 0);
-		if (bytesRecv == -1)
-		{
-			std::cerr << "There was a connection issue!" << std::endl;
-		}
-		else if (bytesRecv == 0)
-		{
-			if (close(clientfd) == -1)
-				std::cerr << "close!" << std::endl;
-			std::cerr << "The Client disconnected!" << std::endl;
-			clientfd *= -1; // it will be ignored in future
-		}
-		else // data from client
-		{
-			// Display message
-			std::cout << "Received: " << std::string(buf, 0, bytesRecv) << std::endl;
-		}
+	// Clear the buffer
+	memset(buf, 0, 4096);
+	// Wait for a message
+	int bytesRecv = recv(clientfd, buf, 4096, 0);
+	if (bytesRecv == -1)
+	{
+		std::cerr << "There was a connection issue!" << std::endl;
+	}
+	else if (bytesRecv == 0)
+	{
+		if (close(clientfd) == -1)
+			std::cerr << "close!" << std::endl;
+		std::cerr << "The Client disconnected!" << std::endl;
+		clientfd *= -1; // it will be ignored in future
+	}
+	else // data from client
+	{
+		// Display message
+		std::cout << "Received: " << std::string(buf, 0, bytesRecv) << std::endl;
+	}
 
-		// Send message
-		send(clientfd, buf, bytesRecv + 1, 0);
-		i++;
+
+/* 	PSEUDOCODE PARSER: 
+		1. STRING is in BUF;
+		2. Send BUF to initParser(std::string* and clientlist)
+		3. ... finds out which commands have been requested; */
+
+	// Send message
+	// std::string nick = "mjpro";
+	std::string user = "mj_nick";
+	std::string channel = "#ch1";
+	std::string message = buf;
+
+	std::ostringstream cmd;
+	cmd //<< "NICK " << nick << "\r\n"
+		<< "USER " << user << "\r\n"
+	// 	// << "JOIN " << channel << "\r\n"
+		<< "PRIVMSG " << channel << " :" << message << "\r\n";
+	std::string cmd_str = cmd.str();
+	for (int i = 1; i < 1024; i++)
+	{
+		if (clients[i].fd != -1 && clients[i].fd != clientfd)
+		{
+			send(clients[i].fd, cmd_str.c_str(), cmd_str.size(), 0);
+			// std::cout << "Message: " << buf << std::endl;
+		}
+	}
+	// std::cout << "Message is as:" << message << "$\n";
+	// send(clientfd, buf, bytesRecv + 1, 0);
 	// }
 }
 
 /* Accepting a call */
-void acceptcall(int server, pollfd *client)
+void acceptcall(int server, pollfd *client, vector<User> *userList)
 {
 	for (int i = 0; i < 1024; i++)
 	{
-		if ((client[i].revents & POLLIN)) // fd is ready fo reading
+		if ((client[i].revents & POLLIN) == POLLIN) // fd is ready for reading
 		{
-			std::cout << "came here\n";
 			if (client[i].fd == server) // request for new connection
 			{
 
@@ -128,8 +165,13 @@ void acceptcall(int server, pollfd *client)
 				if (j < 1024)
 				{
 					client[j].fd = userSocket;
-					client[j].events = POLLIN; //? do we need this line
+					client[j].events = POLLIN; 
 					client[j].revents = 0;
+					/* if (user already there -> iterate through userlist)
+						then assign fd to the user;
+					else */
+					User newUser(client[j].fd);
+					userList.push_back(newUser);
 				}
 				else
 				{
@@ -138,16 +180,20 @@ void acceptcall(int server, pollfd *client)
 			}
 			else // data from an existing connection, recieve it
 			{
-				readinput(client[i].fd);
+				readinput(client[i].fd, client, userList);
 			}
 		}
 	}
 }
 int main()
 {
+	signal(SIGINT, siginthandler);
+	signal(SIGQUIT, siginthandler);
 	struct pollfd clients[1024];
+	std::vector<User> userList;
+	std::vector<Channel> channelList;
 	int server = createserver();
-
+	fd_global = server;
 	for (int i = 0; i < 1024; i++)
 	{
 		clients[i].fd = -1;
@@ -159,7 +205,7 @@ int main()
 	// TODO create mainloop here
 	while (1)
 	{
-		switch (poll(clients, 1024, 42000))
+		switch (poll(clients, 1024, 10000))
 		{
 		case 0:
 			std::cout << "Should not be possible" << std::endl;
@@ -169,13 +215,14 @@ int main()
 			break;
 		default:
 			// std::cout << "begin of the default switch" << std::endl;
-			acceptcall(server, clients);
+			acceptcall(server, clients, &userList);
 			// readinput(clients);
 			break;
+		// if (something_time) -> ft_checkUserList(&userList); // every 30 secs the userlist is checked: it iterates through the list and checks if all data for connections is there;
 		}
 	}
 
 	// Close the listening socket
-	// close(server); //!should we close it ?
+	close(server); //! should we close it ?
 	return (0);
 }

@@ -38,7 +38,15 @@ void CommandHandler::start(User* user, const std::string& message) // client = u
 				user->reply(ERR_NOTREGISTERED(user->getNick())); // errormsg from documentation
 				return;
 			}
-			cmd->execute(client, args);
+			//cmd->execute(user, args);
+			if (cmd_name.compare("JOIN") == 0)
+			{
+				user.execute_join_cmd(user, cmd_name, cmd_args);
+			}
+			else if (cmd_name.compare("KICK") == 0)
+			{
+				user.execute_kick_cmd(user, cmd_name, cmd_args);
+			}
 		}
 		catch (const std::out_of_range& e) // thrown by vector or string
 		{

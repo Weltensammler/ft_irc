@@ -36,18 +36,20 @@
 
 # define RPL_WHOREPLY           352
 # define RPL_ENDOFWHO           315
-# define RPL_NAMREPLY           353
-# define RPL_ENDOFNAMES         366
+# define RPL_NAMREPLY(nick, channel, userlist)           "353 " + nick + " = " + channel + " :" + userlist
+# define RPL_ENDOFNAMES(nick, channel)         "366 " + nick + " " + channel + " :End of userlist"
 # define RPL_ENDOFLINKS         365
 # define RPL_BANLIST            367
 # define RPL_ENDOFBANLIST       368
+# define RPL_JOIN(nick, channel)				":" + nick + " JOIN :" + channel
+# define RPL_KICK(kicker, channel, target, reason) ":" + kicker + " KICK " + channel + " " + target + " :" + reason
 
 # define RPL_INFO               371
-# define ERR_NOSUCHNICK			401
+# define ERR_NOSUCHNICK(target, channel_name)			"401 " + target + " " + channel_name + " :No such nick/channel"
 # define ERR_NOSUCHSERVER		402
 # define ERR_NOSUCHCHANNEL		403
 # define ERR_CANNOTSENDTOCHAN	404
-# define ERR_TOOMANYCHANNELS    405
+# define ERR_TOOMANYCHANNELS(nick, channel_name)    "405 " + nick + " " + channel_name + ": maximum of channels reached"
 # define ERR_WASNOSUCHNICK		406
 # define ERR_TOOMANYTARGETS		407
 # define ERR_NOORIGIN			409
@@ -63,26 +65,26 @@
 # define ERR_ERRONEUSNICKNAME	432
 # define ERR_NICKNAMEINUSE		433
 # define ERR_NICKCOLLISION		436
-# define ERR_USERNOTINCHANNEL	441
-# define ERR_NOTONCHANNEL		442
+# define ERR_USERNOTINCHANNEL(target, channel_name)	"441 " + target + " " + channel_name + " :They aren't on that channel"
+# define ERR_NOTONCHANNEL(nick, channel_name)		"442 " + nick + " " + channel_name " :You're not on that channel"
 # define ERR_USERONCHANNEL		443
 # define ERR_NOLOGIN			444
 # define ERR_SUMMONDISABLED		445
 # define ERR_USERSDISABLED		446
 # define ERR_NOTREGISTERED(_nick)		"451 " + _nick + " :You have not registered"
-# define ERR_NEEDMOREPARAMS		461
+# define ERR_NEEDMOREPARAMS(nick, cmd)	"461 " + nick + cmd + " :not enough parameters"
 # define ERR_ALREADYREGISTRED	462
 # define ERR_NOPERMFORHOST		463
 # define ERR_PASSWDMISMATCH		464
 # define ERR_YOUREBANNEDCREEP	465
 # define ERR_KEYSET				467
-# define ERR_CHANNELISFULL		471
+# define ERR_CHANNELISFULL(nick, channel)		"471 " + nick + " " + channel + " channel is full"
 # define ERR_UNKNOWNMODE		472
 # define ERR_INVITEONLYCHAN		473
 # define ERR_BANNEDFROMCHAN		474
-# define ERR_BADCHANNELKEY		475
+# define ERR_BADCHANNELKEY(nick, channel)		"475 " + nick + " " + channel + " cannot join: wrong password"
 # define ERR_NOPRIVILEGES		481
-# define ERR_CHANOPRIVSNEEDED	482
+# define ERR_CHANOPRIVSNEEDED(nick, channel)					"482 " + nick + " " + channel + " " + " :You're not channel operator"
 # define ERR_CANTKILLSERVER		483
 # define ERR_NOOPERHOST			491
 # define ERR_UMODEUNKNOWNFLAG	501

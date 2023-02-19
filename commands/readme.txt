@@ -19,3 +19,14 @@ added getchannel(const std::stirng channelname);
 added errormsgs
 
 added responses.hpp, commandhandler.hpp/cpp, join.cpp, readme.txt
+
+19.2
+
+user.cpp/hpp:
+added getchannels();
+added get_channel_if_in();
+
+channel cpp/hpp:
+added getAdmin() const;
+get_user_if_in() const;
+delete_user(User* user);

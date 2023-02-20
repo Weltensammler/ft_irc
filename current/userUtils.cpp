@@ -218,3 +218,26 @@ void User::execute_invite_cmd(User* user, const std::string& cmd_name, std::vect
 {
 
 }
+
+// format: NICK <nickname> [ <hopcount> ]
+void execute_nick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
+{
+	if (args.size() == 0)
+	{
+		user->reply(ERR_NONICKNAMEGIVEN(user->getNick()));
+		return;
+	}
+
+	std::string nickname = args[0];
+
+	if (user->_server->findByNick(nickname) != NULL)
+	{
+		user->reply(ERR_NICKNAMEINUSE(user->getNick()));
+		return;
+	}
+
+	user->setNick(nickname);
+	user->reply(RPL_WELCOME(nickname));
+
+
+}

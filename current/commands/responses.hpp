@@ -1,6 +1,6 @@
 # pragma once
 
-# define RPL_WELCOME            001
+# define RPL_WELCOME(nick)      "001 " + nick + " welcome to ft_irc"
 # define RPL_YOURHOST           002
 # define RPL_CREATED            003
 # define RPL_MYINFO             004
@@ -61,9 +61,9 @@
 # define ERR_NOMOTD				422
 # define ERR_NOADMININFO		423
 # define ERR_FILEERROR			424
-# define ERR_NONICKNAMEGIVEN	431
+# define ERR_NONICKNAMEGIVEN(nick)	"431 " + nick + " :No nickname given"
 # define ERR_ERRONEUSNICKNAME	432
-# define ERR_NICKNAMEINUSE		433
+# define ERR_NICKNAMEINUSE(nick)		"433 "  + nick + " :Nickname is already in use"
 # define ERR_NICKCOLLISION		436
 # define ERR_USERNOTINCHANNEL(target, channel_name)	"441 " + target + " " + channel_name + " :They aren't on that channel"
 # define ERR_NOTONCHANNEL(nick, channel_name)		"442 " + nick + " " + channel_name " :You're not on that channel"

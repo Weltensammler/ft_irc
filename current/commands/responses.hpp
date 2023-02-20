@@ -46,7 +46,7 @@
 
 # define RPL_INFO               371
 # define ERR_NOSUCHNICK(target, channel_name)			"401 " + target + " " + channel_name + " :No such nick/channel"
-# define ERR_NOSUCHSERVER		402
+# define ERR_NOSUCHSERVER(server_name)		            "402 " + servername + " :No such server"
 # define ERR_NOSUCHCHANNEL		403
 # define ERR_CANNOTSENDTOCHAN	404
 # define ERR_TOOMANYCHANNELS(nick, channel_name)    "405 " + nick + " " + channel_name + ": maximum of channels reached"

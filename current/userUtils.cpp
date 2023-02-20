@@ -183,3 +183,38 @@ void User::execute_quit_cmd(const std::string& cmd_name, std::vector<std::string
 	// what actually does the client do to quit?
 
 }
+
+
+// format: PING <server1> [<server2>]
+void User::execute_ping_cmd(const std::string& cmd_name, std::vector<std::string> args)
+{
+	if (args.size() == 1)
+	{
+		if (!strcmp((const char *)args[0][0], (const char *)_host))
+		{
+			reply("PONG " + args[0]);
+		}
+		else
+		 reply(ERR_NOSUCHSERVER(args[0]));
+	}
+	// else if (args.size() == 2)
+	// {
+	// 	if (!strcmp((const char *)args[0][0], (const char *)_nick[0]))
+	// 	{
+	// 		if (!strcmp((const char *)args[1][0], (const char *)_host))
+	// 		{
+	// 			reply("PONG " + args[1]);
+	// 		}
+	// 		else
+	// 			reply(ERR_NOSUCHSERVER(args[0]))
+	// 	}
+	// 	else
+	// 		reply(ERR_NOORIGIN())
+	// }
+}
+
+// format: INVITE <nickname> <channel>
+void User::execute_invite_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
+{
+
+}

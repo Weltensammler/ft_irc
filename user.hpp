@@ -39,7 +39,7 @@ public:
 
 	void					setUsername(std::string username);
 	std::string				getUsername() const;
-	
+
 	void					setRealname(std::string realname);
 	std::string				getRealname() const;
 
@@ -49,6 +49,9 @@ public:
 	bool					isRegistered();
 
 	time_t					getTime(); // returns actual time of call (used for Ping)
+
+	void 					setHost(char* host);
+	char*					getHost() const;
 
 	//void					joinChannel(); // makes user join a channel; prompts server to send message to all relevant users about joining; 
 	//void					leaveChannel(); // makes user itself leave channel; sends message that user left channel;

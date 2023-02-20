@@ -69,3 +69,13 @@ bool	User::isRegistered() {
 time_t	User::getTime() {
 	return (std::time(NULL));
 }
+
+void 					User::setHost(char* host)
+{
+	this->_host = host;
+}
+
+char*					User::getHost() const
+{
+	return (this->_host);
+}

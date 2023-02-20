@@ -23,10 +23,11 @@
 #define DISCONNECTED 3
 
 class Channel;
+class Server;
 
 class User {
 public:
-	User(pollfd &client, char* host, char* service);
+	User(pollfd &client, char* host, char* service, Server* server);
 	User&					operator=(const User &src);
 	~User();
 
@@ -54,6 +55,9 @@ public:
 
 	void					setHost(char* host);
 	char**					getHost();
+
+	void					setClient(pollfd &client); // stored client info on user profile
+	void					setService(char* service);
 
 	//void					joinChannel(); // makes user join a channel; prompts server to send message to all relevant users about joining; 
 	//void					leaveChannel(); // makes user itself leave channel; sends message that user left channel;
@@ -86,6 +90,7 @@ private:
 	std::string*			_realname;
 	std::vector<Channel *>	_channels; // list of channels the user is part of for cross-exchanging data
 	struct pollfd &			_client;
+	Server*					_server;
 };
 
 #endif

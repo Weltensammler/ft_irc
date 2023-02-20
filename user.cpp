@@ -3,7 +3,7 @@
 #include "user.hpp"
 #include "server.hpp"
 
-User::User(pollfd &client, char* host, char* service) : _client(client), _host(host), _service(service) {
+User::User(pollfd &client, char* host, char* service, Server* server) : _client(client), _host(host), _service(service), _server(server) {
 	*this->_fd = this->_client.fd;
 	this->_userState = UNAUTH;
 	this->_creationTime = std::time(NULL);
@@ -81,11 +81,18 @@ time_t	User::getCreationTime() {
 	return (this->_creationTime);
 }
 
-void	User::setHost(char* host)
-{
+void	User::setHost(char* host) {
 	this->_host = host;
 }
 
 char**	User::getHost() {
 	return (&this->_host);
+}
+
+void	User::setClient(pollfd &client) {
+	this->_client = client;
+}
+
+void	User::setService(char* service) {
+	this->_service = service;
 }

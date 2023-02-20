@@ -51,14 +51,25 @@ Channel*	Server::findChannel(std::string name) {
 }
 
 /* Check if the User is already in the Server Object's User List */
-int	Server::isUserInServer(std::vector<User *> _userList, char* host)
-{
-	for (std::vector<User *>::iterator it = _userList.begin(); it != _userList.end(); ++it)
+int	Server::isUserInServer(char* host) {
+	for (std::vector<User *>::iterator it = this->_userList.begin(); it != this->_userList.end(); ++it)
 	{
 		if ((*(*it)).getHost() == &host)
-		return (1);
+			return (1);
 	}
 	return (0);
+}
+
+void	Server::reconnectUser(pollfd &client, char* host, char* service) {
+	User* foundUser;
+	for (std::vector<User *>::iterator it = this->_userList.begin(); it != this->_userList.end(); ++it)
+	{
+		if ((*(*it)).getHost() == &host)
+			*foundUser = *(*it);
+			foundUser->setClient(client);
+			foundUser->setHost(host);
+			foundUser->setService(service);
+	}
 }
 
 bool	Server::authUser(User* activeUser) {
@@ -222,10 +233,12 @@ void Server::acceptCall()
 					clients[j].events = POLLIN; //? do we need this line
 					clients[j].revents = 0;
 
-					/* if (..)
-					else */ 
-						User	*newUser = new User(clients[j], host, service);
+					if (this->isUserInServer(host) == 1)
+						this->reconnectUser(clients[j], host, service);
+					else {
+						User	*newUser = new User(clients[j], host, service, this);
 						this->_userList.push_back(newUser);
+					}
 					
 					// Testing ---
 					std::ostringstream cmd;
@@ -244,7 +257,10 @@ void Server::acceptCall()
 			}
 			else // data from an existing connection, recieve it
 			{
+				// authent.....
 				this->readInput(i);
+				//executor; CMD handler
+				// AnswerToClient
 			}
 		}
 	}

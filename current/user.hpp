@@ -15,6 +15,7 @@
 // #include <signal.h>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include "channel.hpp"
 #include "server.hpp"

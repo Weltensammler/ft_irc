@@ -216,5 +216,15 @@ void User::execute_ping_cmd(const std::string& cmd_name, std::vector<std::string
 // format: INVITE <nickname> <channel>
 void User::execute_invite_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
 {
+	// check if user is operator operator rights of the channel
+	if (args.size() < 2)
+		reply(ERR_NEEDMOREPARAMS(_nick, cmd_name));
+	else if (args.size() == 2)
+	{
+		//is nickname existing
 
+		//is channel existing
+
+		//is the inviter channel operator
+	}
 }

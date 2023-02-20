@@ -162,20 +162,26 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 }
 
 
-// format: QUIT [<quitmsg>]
+// format: QUIT (:)[<quitmsg>]
 void User::execute_quit_cmd(const std::string& cmd_name, std::vector<std::string> args)
 {
 	//send quit msg
 	std::vector<Channel *> cha = getChannels();
 	for(int i = 0;  i < getChannels().size(); i++)
 	{
-		if (args.size() == 1)
+		if (args.size() == 1) // args.size() == 0 -> the cmmd-name is not in args
 		{
 			cha[i]->notify_others("QUIT", this);
 		}
-		else if (args.size() == 2)
+		else if (args.size() == 2) // args.size() > 0
 		{
-			cha[i]->notify_others("QUIT :" + args[1], this);
+			std::string quitmsg = args[0];
+			if (quitmsg.at(0) == ':')
+			{
+				quitmsg = quitmsg.substr(1);
+			}
+			cha[i]->notify_others("QUIT :" + args[1], this); // args[0]
+			
 		}
 	}
 

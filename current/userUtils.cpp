@@ -219,8 +219,8 @@ void User::execute_invite_cmd(User* user, const std::string& cmd_name, std::vect
 
 }
 
-// format: NICK <nickname> [ <hopcount> ]
-void execute_nick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
+// format: NICK <nickname>
+void User::execute_nick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
 {
 	if (args.size() == 0)
 	{

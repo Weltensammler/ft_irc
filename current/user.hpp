@@ -66,6 +66,7 @@ public:
 	void 					execute_quit_cmd(const std::string& cmd_name, std::vector<std::string> args);
 	void					execute_ping_cmd(const std::string& cmd_name, std::vector<std::string> args);
 	void					execute_nick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
+	void					execute_user_cmd();
 	
 {
 

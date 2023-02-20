@@ -1,6 +1,6 @@
 #include <errno.h>
+#include <ctime>
 #include "server.hpp"
-
 
 Server::Server(std::string serverPass, int port): _pass(serverPass), _port(port)
 {
@@ -20,13 +20,73 @@ std::string	Server::getPass() const {
 	return (this->_pass);
 }
 
-void Server::createServer(void)
+User*	Server::findByFd(int clientFd) {
+	std::vector<User*>::iterator itr;
+	for (itr=begin(this->_userList); itr != end(this->_userList); ++itr) {
+		if (clientFd == *(*itr)->getFd())
+			return (*itr);
+	}
+	std::cerr << "User FD not found" << std::endl;
+	return (NULL);
+}
+
+User*	Server::findByNick(std::string nick) {
+	std::vector<User*>::iterator itr;
+	for (itr=begin(this->_userList); itr != end(this->_userList); ++itr) {
+		if (nick == *(*itr)->getNick())
+			return (*itr);
+	}
+	std::cerr << "User nickname not found" << std::endl;
+	return (NULL);
+}
+
+Channel*	Server::findChannel(std::string name) {
+	std::vector<Channel*>::iterator itr;
+	for (itr=begin(this->_channelList); itr != end(this->_channelList); ++itr) {
+		if (name == *(*itr)->getName())
+			return (*itr);
+	}
+	std::cerr << "Channel not found by name" << std::endl;
+	return (NULL);
+}
+
+/* Check if the User is already in the Server Object's User List */
+int	Server::isUserInServer(std::vector<User *> _userList, char* host)
+{
+	for (std::vector<User *>::iterator it = _userList.begin(); it != _userList.end(); ++it)
+	{
+		if ((*(*it)).getHost() == &host)
+		return (1);
+	}
+	return (0);
+}
+
+bool	Server::authUser(User* activeUser) {
+	if (activeUser->pwCheck() == false)
+		return false;
+	if (!activeUser->getNick()->c_str())
+		return false;
+	if (!activeUser->getUsername()->c_str())
+		return false;
+	else
+		return true;
+}
+
+void	Server::kickUser(User* toBeKicked) {
+	//close fd? 
+	// delete toBeKicked;
+}
+
+
+
+
+int Server::createServer(void)
 {
 	int listening = socket(AF_INET, SOCK_STREAM, 0);
 	if (listening == -1)
 	{
 		std::cerr << "Can't create a socket!" << std::endl;
-		/* return (-1); */ // as of now the f.return type is void, we removed this; has to be resculptured;
+		return (-1); // as of now the f.return type is void, we removed this; has to be resculptured;
 	}
 	// TODO add setsockopt function and research
 	sockaddr_in hint;
@@ -38,19 +98,21 @@ void Server::createServer(void)
 	{
 		std::cerr << "Can't bind to IP/Port!" << std::endl;
 		std::cerr << errno << std::endl;
-		/* return (-2); */
+		return (-2);
 	}
 	if (listen(listening, SOMAXCONN) == -1)
 	{
 		std::cerr << "Can't listen!" << std::endl;
-		/* return (-3); */
+		return (-3);
 	}
 	this->fd_server = listening;
+	return (1);
 }
 
 //comented out to compile and work on authentification
-void Server::readInput(int client_no)
+int Server::readInput(int client_no)
 {
+	time_t	timeNow = time(NULL); 
 	char buf[4096];
 	int i = 0;
 	memset(buf, 0, 4096);
@@ -71,13 +133,20 @@ void Server::readInput(int client_no)
 		// Display message
 		std::cout << "Received: " << std::string(buf, 0, bytesRecv) << std::endl;
 	}
-	//parsing buffer to vector of two string elements
-		//first element is prefix or empty
-		//second element is always Command and Parameters to it
 
-	//std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
+	/* Whole authUser can be under the "AcceptCall" function - will be moved later */
+	User* activeUser = this->findByFd(this->clients[client_no].fd);
+	if (activeUser != 0) {
+		if (this->authUser(activeUser) == false && (timeNow - activeUser->getCreationTime() >= 60))
+		{
+			// add function here to: kick and remove user from server: kickUser()
+			return (-1);
+		}
+	}
+	else
+		return (1);
 
-	// WORK WITH BUFFER AFTER PARSING
+	// std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
 
 	// Send message
 	// std::string nick = "mjpro";
@@ -102,6 +171,7 @@ void Server::readInput(int client_no)
 	// std::cout << "Message is as:" << message << "$\n";
 	// send(clientfd, buf, bytesRecv + 1, 0);
 	// }
+	return (1);
 }
 
 /* Accepting a call */
@@ -109,7 +179,7 @@ void Server::acceptCall()
 {
 	for (int i = 0; i < 1024; i++)
 	{
-		if ((this->clients[i].revents & POLLIN) == POLLIN) // fd is ready fo reading
+		if ((this->clients[i].revents & POLLIN) == POLLIN) // fd is ready for reading
 		{
 			std::cout << "this client i fd is: " << this->clients[i].fd << "\n and this fd_server is: " << this->fd_server << std::endl;
 			if (this->clients[i].fd == this->fd_server) // request for new connection

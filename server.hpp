@@ -43,7 +43,7 @@ class Server {
 		void					readInput(int client_no);
 		void					acceptCall();
 		
-		int						isUserInServer(std::vector<User *> _userList);
+		int						isUserInServer(std::vector<User *> _userList, char* host);
 
 		int						_port;
 		std::string				_pass;

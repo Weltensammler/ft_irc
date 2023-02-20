@@ -42,6 +42,8 @@ class Server {
 	private:
 		void					readInput(int client_no);
 		void					acceptCall();
+		
+		int						isUserInServer(std::vector<User *> _userList);
 
 		int						_port;
 		std::string				_pass;

@@ -229,3 +229,13 @@ void	Server::pollLoop()
 	return (NULL);
 } */
 
+/* Check if the User is already in the Server Object's User List */
+int		isUserInServer(std::vector<User *> _userList, char* host)
+{
+	for (std::vector<User *>::iterator it = _userList.begin(); it != _userList.end(); ++it)
+	{
+		if ((*(*it)).getHost() == host)
+		 return (1);
+	}
+	return (0);
+}

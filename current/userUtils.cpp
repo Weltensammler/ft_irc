@@ -161,3 +161,25 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 	std::cout << target << " has been kicked from channel " << channel_name << ".\n";
 }
 
+
+// format: QUIT [<quitmsg>]
+void User::execute_quit_cmd(const std::string& cmd_name, std::vector<std::string> args)
+{
+	//send quit msg
+	std::vector<Channel *> cha = getChannels();
+	for(int i = 0;  i < getChannels().size(); i++)
+	{
+		if (args.size() == 1)
+		{
+			cha[i]->notify_others("QUIT", this);
+		}
+		else if (args.size() == 2)
+		{
+			cha[i]->notify_others("QUIT :" + args[1], this);
+		}
+	}
+
+	//quit session
+	// what actually does the client do to quit?
+
+}

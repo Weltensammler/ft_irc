@@ -73,7 +73,7 @@
 # define ERR_USERSDISABLED		446
 # define ERR_NOTREGISTERED(_nick)		"451 " + _nick + " :You have not registered"
 # define ERR_NEEDMOREPARAMS(nick, cmd)	"461 " + nick + cmd + " :not enough parameters"
-# define ERR_ALREADYREGISTRED	462
+# define ERR_ALREADYREGISTRED(nick)	"462 " + nick + " :You may not reregister"
 # define ERR_NOPERMFORHOST		463
 # define ERR_PASSWDMISMATCH		464
 # define ERR_YOUREBANNEDCREEP	465

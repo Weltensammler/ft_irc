@@ -238,6 +238,31 @@ void User::execute_nick_cmd(User* user, const std::string& cmd_name, std::vector
 
 	user->setNick(nickname);
 	user->reply(RPL_WELCOME(nickname));
+}
 
+/*
+* format: USER <username> <hostname> <servername> <realname>
+* ***********************************************************
+* used in communication between servers to indicate new user
+* arriving on IRC, since only after both USER and NICK have been
+* received from a client does a user become registered.
+*/
+void User::execute_user_cmd(User* user, std::vector<std::string> args)
+{
+ if (user->isRegistered())
+ {
+	user->reply(ERR_ALREADYREGISTERED(user->getNick()));
+	return;
+ }
+
+ if (args.size() < 4)
+ {
+	user->reply(ERR_NEEDMOREPARAMS(user->getNick()), "USER");
+	return;
+ }
+
+ user->setUsername(args[0]);
+ user->setRealname(args[3]);
+ user->reply(RPL_WELCOME(user->getNick()));
 
 }

@@ -3,10 +3,11 @@ CFLAGS		= -Wall -Werror -Wextra -std=c++98 #-g -Og
 RM			= rm -f
 NAME		= irc
 
-SRC			= main.cpp \
+SRC			= main_message.cpp \
 				server.cpp \
 				user.cpp \
-				ping_pong.cpp
+				ping_pong.cpp \
+				Message.cpp
 
 OBJ			= $(SRC:cpp=o)
 

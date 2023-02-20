@@ -1,6 +1,6 @@
 #include <errno.h>
 #include "server.hpp"
-
+#include "Message.hpp"
 
 Server::Server(std::string serverPass, int port): _pass(serverPass), _port(port)
 {
@@ -76,6 +76,7 @@ void Server::readInput(int client_no)
 		//second element is always Command and Parameters to it
 
 	//std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
+	Message	*parsed_message = new Message(std::string(buf, 0, bytesRecv));
 
 	// WORK WITH BUFFER AFTER PARSING
 

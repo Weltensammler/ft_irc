@@ -12,15 +12,14 @@ Message::Message()
 
 Message::Message(std::string message_raw)
 {
-	// Would use private parsing function(s)
+	// Might use private parsing function(s)... OR NOT...
 	this->setPrefix("", "", "");
 
 	// Parse command
 	int	message_index = 0;
+	int	command_category = 0;
 
-	while (message_raw.at(message_index) == ' ' || message_raw.at(message_index) == '\t')
-		message_index++;
-	if (message_raw.at(message_index) == '/')
+	if (message_raw.at(message_index) == '/' && message_raw.at(message_index + 1) != ' ')
 	{
 		std::string	cmd_string;
 
@@ -29,11 +28,47 @@ Message::Message(std::string message_raw)
 			cmd_string.push_back(message_raw.at(message_index));
 			message_index++;
 		}
-		this->command = cmd_string;
+
+		std::string	temp_str;
+		for (int i = 0; i < cmd_string.length(); i++)
+			this->command.push_back(std::toupper(cmd_string.at(i)));
+
+		// Searching through the first category of commands
+		for (std::vector<std::string>::const_iterator it = this->known_commands_one.begin(); it != this->known_commands_one.end(); it++)
+		{
+			if (*it == this->command)
+			{
+				command_category = 1;
+				break ;
+			}
+		}
+		// if (command_category == 0)
+		// ... further for-loops through other vectors of known commands ...
+
+		switch (command_category)
+		{
+			case 1: // Specifically for NICK, JOIN, PING or QUIT! Commands with only one parameter in the form of a single string.
+			{
+				std::string	param_string;
+
+				while (message_raw.at(message_index) == ' ' || message_raw.at(message_index) == '\t')
+					message_index++;
+				while (message_raw.at(message_index) != ' ' && message_raw.at(message_index) != '\t')
+				{
+					param_string.push_back(message_raw.at(message_index));
+					message_index++;
+				}
+				this->params.push_back(param_string);
+			}
+			default:
+				break ;
+		}
 
 		// Parse flags
+		// while (message_raw.at(message_index) == ' ' || message_raw.at(message_index) == '\t')
+		// 	message_index++;
 	}
-	else
+	else // At this point, the message is identified as being just plain freetext.
 	{
 		this->command = std::string("");
 		this->flags = std::vector<std::string>();
@@ -65,6 +100,7 @@ Message	&Message::operator=(const Message &original)
 	this->params = original.getParams();
 	this->freetext = original.getFreetext();
 	std::cout << "Copied Message constructed." << std::endl;
+	return (*this);
 }
 
 t_prefix	Message::getPrefix(void) const

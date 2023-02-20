@@ -10,15 +10,16 @@ typedef struct	s_prefix
 	std::string	server;
 }				t_prefix;
 
-class Message
+class Message // CURRENT STATUS: Can only generate Messages with commands NICK, JOIN, PING and QUIT (NOT TESTED YET)
 {
 	private:
-		const std::vector<std::string>	known_commands{"PASS", "QUIT", "NICK", "NOTICE", "USER", "PART", "MODE", "JOIN", "PRIVMSG", "PING", "PONG", "KICK", "BAN"};
-		t_prefix						prefix;
-		std::string						command;
-		std::vector<std::string>		flags;
-		std::vector<std::string>		params;
-		std::string						freetext;
+		const std::vector<std::string>	known_commands{"/PASS", "/QUIT", "/NICK", "/NOTICE", "/USER", "/PART", "/MODE", "/JOIN", "/PRIVMSG", "/PING", "/PONG", "/KICK", "/BAN"};
+		const std::vector<std::string>	known_commands_one{"/NICK", "/JOIN", "/PING", "/QUIT"};
+		t_prefix						prefix;		// CURRENT STATUS: DOES NOT GET POPULATED
+		std::string						command;	// CURRENT STATUS: IMPLEMENTED
+		std::vector<std::string>		flags;		// CURRENT STATUS: DOES NOT GET POPULATED
+		std::vector<std::string>		params;		// CURRENT STATUS: IMPLEMENTED
+		std::string						freetext;	// CURRENT STATUS: DOES NOT GET POPULATED
 
 	public:
 		Message();

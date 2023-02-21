@@ -222,8 +222,10 @@ void User::execute_invite_cmd(User* user, const std::string& cmd_name, std::vect
 	else if (args.size() == 2)
 	{
 		//is nickname existing
+			//using the server function to find the nickname
 
 		//is channel existing
+			//using the server function to find the channel
 
 		//is the inviter channel operator
 	}

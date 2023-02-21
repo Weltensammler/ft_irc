@@ -41,11 +41,31 @@ void CommandHandler::start(User* user, const std::string& message) // client = u
 			//cmd->execute(user, args);
 			if (cmd_name.compare("JOIN") == 0)
 			{
-				user.execute_join_cmd(user, cmd_name, cmd_args);
+				user->execute_join_cmd(user, cmd_name, cmd_args);
 			}
 			else if (cmd_name.compare("KICK") == 0)
 			{
-				user.execute_kick_cmd(user, cmd_name, cmd_args);
+				user->execute_kick_cmd(user, cmd_name, cmd_args);
+			}
+			else if (cmd_name.compare("NICK") == 0)
+			{
+				user->execute_nick_cmd(user, cmd_name, cmd_args);
+			}
+			else if (cmd_name.compare("PING") == 0)
+			{
+				user->execute_ping_cmd(cmd_name, cmd_args);
+			}
+			else if (cmd_name.compare("QUIT") == 0)
+			{
+				user->execute_quit_cmd(cmd_name, cmd_args);
+			}
+			else if (cmd_name.compare("INVITE") == 0)
+			{
+				execute_invite_cmd(user, cmd_name, cmd_args);
+			}
+			else if (cmd_name.compare("USER") == 0)
+			{
+				execute_user_cmd()
 			}
 		}
 		catch (const std::out_of_range& e) // thrown by vector or string

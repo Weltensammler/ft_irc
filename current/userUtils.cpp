@@ -162,20 +162,26 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 }
 
 
-// format: QUIT [<quitmsg>]
+// format: QUIT (:)[<quitmsg>]
 void User::execute_quit_cmd(const std::string& cmd_name, std::vector<std::string> args)
 {
 	//send quit msg
 	std::vector<Channel *> cha = getChannels();
 	for(int i = 0;  i < getChannels().size(); i++)
 	{
-		if (args.size() == 1)
+		if (args.size() == 1) // args.size() == 0 -> the cmmd-name is not in args
 		{
 			cha[i]->notify_others("QUIT", this);
 		}
-		else if (args.size() == 2)
+		else if (args.size() == 2) // args.size() > 0
 		{
-			cha[i]->notify_others("QUIT :" + args[1], this);
+			std::string quitmsg = args[0];
+			if (quitmsg.at(0) == ':')
+			{
+				quitmsg = quitmsg.substr(1);
+			}
+			cha[i]->notify_others("QUIT :" + args[1], this); // args[0]
+			
 		}
 	}
 
@@ -229,4 +235,52 @@ void User::execute_invite_cmd(User* user, const std::string& cmd_name, std::vect
 
 		//is the inviter channel operator
 	}
+}
+
+// format: NICK <nickname>
+void User::execute_nick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
+{
+	if (args.size() == 0)
+	{
+		user->reply(ERR_NONICKNAMEGIVEN(user->getNick()));
+		return;
+	}
+
+	std::string nickname = args[0];
+
+	if (user->_server->findByNick(nickname) != NULL)
+	{
+		user->reply(ERR_NICKNAMEINUSE(user->getNick()));
+		return;
+	}
+
+	user->setNick(nickname);
+	user->reply(RPL_WELCOME(nickname));
+}
+
+/*
+* format: USER <username> <hostname> <servername> <realname>
+* ***********************************************************
+* used in communication between servers to indicate new user
+* arriving on IRC, since only after both USER and NICK have been
+* received from a client does a user become registered.
+*/
+void User::execute_user_cmd(User* user, std::vector<std::string> args)
+{
+ if (user->isRegistered())
+ {
+	user->reply(ERR_ALREADYREGISTERED(user->getNick()));
+	return;
+ }
+
+ if (args.size() < 4)
+ {
+	user->reply(ERR_NEEDMOREPARAMS(user->getNick()), "USER");
+	return;
+ }
+
+ user->setUsername(args[0]);
+ user->setRealname(args[3]);
+ user->reply(RPL_WELCOME(user->getNick()));
+
 }

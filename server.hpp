@@ -44,6 +44,21 @@ class Server {
 
 	private:
 		void					readInput(int client_no);
+		int						isUserInServer(char* host); // checks if user has already been registered before
+		void					reconnectUser(pollfd &client, char* host, char* service); // reconnects user (by host) to existing user profile
+
+		User*					findByFd(int clientFd); // finds user by FD
+		User*					findByNick(std::string nick); // finds user by nickname
+		Channel*				findChannel(std::string name); // finds a channel by name
+		// User*					findByHost()
+		bool					authUser(User* activeUser); // checks if user is authed, meaning: pass, nick and username provided
+		void					kickUser(User* toBeKicked);
+
+		int						fd_server;
+		struct pollfd 			clients[1024]; // each client has unique fd
+
+	private:
+		int						readInput(int client_no);
 		void					acceptCall();
 
 		int						_port;

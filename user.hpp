@@ -11,46 +11,54 @@
 #include <poll.h>
 #include <sstream>
 #include <ctime>
-#include <time.h>
 // #include <signal.h>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 #include "channel.hpp"
 #include "server.hpp"
-#include "commands/responses.hpp"
 
-#define UNAUTHORIZED 1
+#define UNAUTH 1
 #define CONNECTED 2
 #define DISCONNECTED 3
 
 class Channel;
+class Server;
 
 class User {
 public:
-	User(pollfd &client, sockaddr_in newUserData);
+	User(pollfd &client, char* host, char* service, Server* server);
+
 	User&					operator=(const User &src);
 	~User();
 
 	void					setFd(int new_fd);
-	int 					getFd() const;
+	int* 					getFd() const;
 
 	void 					setNick(std::string nick); // set in lowercase / convert
-	std::string				getNick() const;
+	std::string*			getNick() const;
 
 	void					setUsername(std::string username);
-	std::string				getUsername() const;
+	std::string*			getUsername() const;
 	
 	void					setRealname(std::string realname);
-	std::string				getRealname() const;
+	std::string*			getRealname() const;
 
 	void					setState(int state);
 	int						getState(); 
 
+	bool					pwCheck();
+
 	bool					isRegistered();
 
 	time_t					getTime(); // returns actual time of call (used for Ping)
+	time_t					getCreationTime(); // returns time of creation of user
+
+	void					setHost(char* host);
+	char**					getHost();
+
+	void					setClient(pollfd &client); // stored client info on user profile
+	void					setService(char* service);
 
 	//void					joinChannel(); // makes user join a channel; prompts server to send message to all relevant users about joining; 
 	//void					leaveChannel(); // makes user itself leave channel; sends message that user left channel;
@@ -73,21 +81,26 @@ public:
 	std::vector<Channel *>	getChannels();
 	const Channel*			get_channel_if_in(const std::string& channel_name);
 
+
+	std::vector<Channel *>	getChannels();
+
 	bool					isOperator(); // server operator: channel operators are stored in channel object
 	void					setOperator();
 
 private:
-	std::string				_nick;
-	int						_fd;
+	std::string*			_nick;
+	int*					_fd;
 	char*					_host;
 	char*					_service;
 	int						_userState;
 	bool					_isRegistered;
+	bool					_sentPassword;
 	time_t					_creationTime;
-	std::string				_username;
-	std::string				_realname;
+	std::string*			_username;
+	std::string*			_realname;
 	std::vector<Channel *>	_channels; // list of channels the user is part of for cross-exchanging data
-	struct pollfd &			_client; 
+	struct pollfd &			_client;
+	Server*					_server;
 };
 
 #endif

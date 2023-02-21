@@ -3,9 +3,9 @@
 #include "user.hpp"
 #include "server.hpp"
 
-User::User(pollfd &client, char* host, char* service) : _client(client), _host(host), _service(service) {
-	this->_fd = this->_client.fd;
-	this->_userState = UNAUTHORIZED;
+User::User(pollfd &client, char* host, char* service, Server* server) : _client(client), _host(host), _service(service), _server(server) {
+	*this->_fd = this->_client.fd;
+	this->_userState = UNAUTH;
 	this->_creationTime = std::time(NULL);
 	std::cout << "Default user constructor called with Client Input" << std::endl;
 }
@@ -21,45 +21,52 @@ User::~User() {
 }
 
 void	User::setFd(int new_fd) {
-	this->_fd = new_fd;
+	this->_fd = &new_fd;
 }
 
-int		User::getFd() const {
+int*	User::getFd() const {
 	return (this->_fd);
 }
 
 void	User::setNick(std::string nick) {
 	std::transform(nick.begin(), nick.end(), nick.begin(), ::tolower); // check if tolower won't create problems later
-	this->_nick = nick;
+	this->_nick = &nick;
 }
 
-std::string	User::getNick() const {
+std::string*	User::getNick() const {
 	return (this->_nick);
 }
 
 void	User::setUsername(std::string username) {
-	this->_username = username;
+	this->_username = &username;
 }
 
-std::string	User::getUsername() const {
+std::string*	User::getUsername() const {
 	return (this->_username);
 }
 
 void	User::setRealname(std::string realname) {
-	this->_username = realname;
+	this->_username = &realname;
 }
 
-std::string	User::getRealname() const {
+std::string*	User::getRealname() const {
 	return (this->_realname);
 }
 
 /* Sets user state to one of the given macros: UNAUTHORIZED, DISCONNECTED, CONNECTED, ... */
 void	User::setState(int state) {
-	// ...
+	this->_userState = state;
 }
 
 int	User::getState() {
 	return (this->_userState);
+}
+
+bool	User::pwCheck() {
+	if (this->_sentPassword == true)
+		return true;
+	else
+		return false;
 }
 
 bool	User::isRegistered() {
@@ -90,4 +97,22 @@ const Channel*	User::get_channel_if_in(const std::string& channel_name)
 	}
 
 	return (NULL);
+time_t	User::getCreationTime() {
+	return (this->_creationTime);
+}
+
+void	User::setHost(char* host) {
+	this->_host = host;
+}
+
+char**	User::getHost() {
+	return (&this->_host);
+}
+
+void	User::setClient(pollfd &client) {
+	this->_client = client;
+}
+
+void	User::setService(char* service) {
+	this->_service = service;
 }

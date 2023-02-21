@@ -19,7 +19,7 @@ Message::Message(std::string message_raw)
 	int	message_index = 0;
 	int	command_category = 0;
 
-	if (message_raw.at(message_index) == '/' && message_raw.at(message_index + 1) != ' ')
+	if (message_raw.length() > 4 && message_raw.at(message_index) == '/' && message_raw.at(message_index + 1) != ' ')
 	{
 		std::string	cmd_string;
 
@@ -29,7 +29,6 @@ Message::Message(std::string message_raw)
 			message_index++;
 		}
 
-		std::string	temp_str;
 		for (int i = 0; i < cmd_string.length(); i++)
 			this->command.push_back(std::toupper(cmd_string.at(i)));
 

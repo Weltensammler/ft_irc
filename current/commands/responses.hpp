@@ -1,5 +1,7 @@
 # pragma once
 
+#define TIMEOUT                 180
+
 # define RPL_WELCOME(nick)      "001 " + nick + " welcome to ft_irc"
 # define RPL_YOURHOST           002
 # define RPL_CREATED            003
@@ -46,7 +48,7 @@
 
 # define RPL_INFO               371
 # define ERR_NOSUCHNICK(target, channel_name)			"401 " + target + " " + channel_name + " :No such nick/channel"
-# define ERR_NOSUCHSERVER(server_name)		            "402 " + servername + " :No such server"
+# define ERR_NOSUCHSERVER(server_name)		            "402 " + server_name + " :No such server"
 # define ERR_NOSUCHCHANNEL		403
 # define ERR_CANNOTSENDTOCHAN	404
 # define ERR_TOOMANYCHANNELS(nick, channel_name)    "405 " + nick + " " + channel_name + ": maximum of channels reached"

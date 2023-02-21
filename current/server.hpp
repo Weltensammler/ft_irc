@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "user.hpp"
+#include "commands/responses.hpp"
 /* #include "channel.hpp" */
 
 class Channel;

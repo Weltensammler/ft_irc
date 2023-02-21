@@ -1,4 +1,5 @@
 #include "user.hpp"
+#include "commands/responses.hpp"
 
 // -----------------------
 /* Currently only returns the nickname, because other data has to be added/checked still */
@@ -154,40 +155,40 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 
 	// actual kicking
 
-	channel->notify_others(RPL_KICK(user, channel_name, target, reason));
+	channel->notify_others(RPL_KICK(user, channel_name, target, reason), this);
 
 	channel->delete_user(target_user);
 
 	std::cout << target << " has been kicked from channel " << channel_name << ".\n";
 }
 
-
 // format: QUIT (:)[<quitmsg>]
 void User::execute_quit_cmd(const std::string& cmd_name, std::vector<std::string> args)
 {
 	//send quit msg
-	std::vector<Channel *> cha = getChannels();
+	std::vector<Channel *> channel = getChannels();
 	for(int i = 0;  i < getChannels().size(); i++)
 	{
-		if (args.size() == 1) // args.size() == 0 -> the cmmd-name is not in args
+		if (args.size() == 0)
 		{
-			cha[i]->notify_others("QUIT", this);
+			channel[i]->notify_others("QUIT", this);
+			channel[i]->delete_user(this);
+			
 		}
-		else if (args.size() == 2) // args.size() > 0
+		else if (args.size() > 0)
 		{
 			std::string quitmsg = args[0];
 			if (quitmsg.at(0) == ':')
 			{
 				quitmsg = quitmsg.substr(1);
 			}
-			cha[i]->notify_others("QUIT :" + args[1], this); // args[0]
-			
+			channel[i]->notify_others("QUIT :" + args[0], this);
+			channel[i]->delete_user(this);
 		}
 	}
-
-	//quit session
-	// what actually does the client do to quit?
-
+	setFd(-1);
+	_isRegistered = false;
+	//killUser(this, "User hast quit"); //When command is implemented, we only need to call it
 }
 
 
@@ -196,46 +197,32 @@ void User::execute_ping_cmd(const std::string& cmd_name, std::vector<std::string
 {
 	if (args.size() == 1)
 	{
-		if (!strcmp((const char *)args[0][0], (const char *)_host))
+		if (!strcmp((const char *)args[0][0], (const char *)_host)) //comparing args[0] to servername, is _host the servername?
 		{
 			reply("PONG " + args[0]);
 		}
 		else
 		 reply(ERR_NOSUCHSERVER(args[0]));
 	}
-	// else if (args.size() == 2)
-	// {
-	// 	if (!strcmp((const char *)args[0][0], (const char *)_nick[0]))
-	// 	{
-	// 		if (!strcmp((const char *)args[1][0], (const char *)_host))
-	// 		{
-	// 			reply("PONG " + args[1]);
-	// 		}
-	// 		else
-	// 			reply(ERR_NOSUCHSERVER(args[0]))
-	// 	}
-	// 	else
-	// 		reply(ERR_NOORIGIN())
-	// }
 }
 
 // format: INVITE <nickname> <channel>
-void User::execute_invite_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
-{
-	// check if user is operator operator rights of the channel
-	if (args.size() < 2)
-		reply(ERR_NEEDMOREPARAMS(_nick, cmd_name));
-	else if (args.size() == 2)
-	{
-		//is nickname existing
-			//using the server function to find the nickname
+// void User::execute_invite_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
+// {
+// 	// check if user is operator operator rights of the channel
+// 	if (args.size() < 2)
+// 		reply(ERR_NEEDMOREPARAMS(_nick, cmd_name));
+// 	else if (args.size() == 2)
+// 	{
+// 		//is nickname existing
+// 			//using the server function to find the nickname
 
-		//is channel existing
-			//using the server function to find the channel
+// 		//is channel existing
+// 			//using the server function to find the channel
 
-		//is the inviter channel operator
-	}
-}
+// 		//is the inviter channel operator
+// 	}
+// }
 
 // format: NICK <nickname>
 void User::execute_nick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)

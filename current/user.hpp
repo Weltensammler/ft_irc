@@ -19,6 +19,7 @@
 
 #include "channel.hpp"
 #include "server.hpp"
+#include "commands/responses.hpp"
 
 #define UNAUTHORIZED 1
 #define CONNECTED 2
@@ -68,9 +69,6 @@ public:
 	void					execute_ping_cmd(const std::string& cmd_name, std::vector<std::string> args);
 	void					execute_nick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
 	void					execute_user_cmd();
-	
-{
-
 
 	std::vector<Channel *>	getChannels();
 	const Channel*			get_channel_if_in(const std::string& channel_name);

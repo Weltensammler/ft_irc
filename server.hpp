@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "user.hpp"
-#include "commands/responses.hpp"
+#include "responses.hpp"
 /* #include "channel.hpp" */
 
 class Channel;
@@ -27,7 +27,7 @@ class Server {
 		~Server();
 		Server(std::string pass, int port);
 
-		void		createServer();
+		int			createServer();
 		void		initClient();
 		void		pollLoop();
 		void		pingClient();
@@ -43,7 +43,6 @@ class Server {
 		// Channel*				getChannel(const std::string& channel_name);
 
 	private:
-		void					readInput(int client_no);
 		int						isUserInServer(char* host); // checks if user has already been registered before
 		void					reconnectUser(pollfd &client, char* host, char* service); // reconnects user (by host) to existing user profile
 
@@ -53,11 +52,6 @@ class Server {
 		// User*					findByHost()
 		bool					authUser(User* activeUser); // checks if user is authed, meaning: pass, nick and username provided
 		void					kickUser(User* toBeKicked);
-
-		int						fd_server;
-		struct pollfd 			clients[1024]; // each client has unique fd
-
-	private:
 		int						readInput(int client_no);
 		void					acceptCall();
 

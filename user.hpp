@@ -81,9 +81,6 @@ public:
 	std::vector<Channel *>	getChannels();
 	const Channel*			get_channel_if_in(const std::string& channel_name);
 
-
-	std::vector<Channel *>	getChannels();
-
 	bool					isOperator(); // server operator: channel operators are stored in channel object
 	void					setOperator();
 

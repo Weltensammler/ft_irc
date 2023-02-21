@@ -89,7 +89,7 @@ const Channel*	User::get_channel_if_in(const std::string& channel_name)
 
 	while (start != end)
 	{
-		if ((*start)->getName().compare(channel_name) == 0)
+		if ((*start)->getName()->compare(channel_name) == 0)
 		{
 			return ((*start));
 		}
@@ -97,6 +97,8 @@ const Channel*	User::get_channel_if_in(const std::string& channel_name)
 	}
 
 	return (NULL);
+}
+
 time_t	User::getCreationTime() {
 	return (this->_creationTime);
 }

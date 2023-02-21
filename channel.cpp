@@ -34,6 +34,32 @@ void	Channel::addBanned(User* toBan) {
 	this->_bannedList.push_back(toBan);
 }
 
+void Channel::delete_user(User* user)
+{
+	std::vector<User*>::iterator start = this->_userLogList.begin();
+	std::vector<User*>::iterator end = this->_userLogList.end();
+
+	if (this->_userLogList.size() == 0)
+	{
+		return;
+	}
+
+	while (start != end)
+	{
+		if ((*(*start)).getNick()->compare(*user->getNick()) == 0)
+		{
+			this->_userLogList.erase(start);
+		}
+		start++;
+	}
+
+	if (this->_admin == user)
+	{
+		_admin = *(this->_userLogList.begin());
+		std::cout << _admin->getNick() << " is now admin of channel: " << this->getName() << std::endl;
+	}
+}
+
 bool	Channel::ifBanned(User* ifBan) {
 	std::vector<User*>::iterator itr;
 	for (itr=begin(this->_bannedList); itr != end(this->_bannedList); ++itr) {

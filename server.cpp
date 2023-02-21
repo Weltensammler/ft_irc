@@ -21,7 +21,8 @@ std::string	Server::getPass() const {
 	return (this->_pass);
 }
 
-void Server::createServer(void)
+// void Server::createServer(void)
+
 User*	Server::findByFd(int clientFd) {
 	std::vector<User*>::iterator itr;
 	for (itr=begin(this->_userList); itr != end(this->_userList); ++itr) {

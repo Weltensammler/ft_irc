@@ -36,6 +36,7 @@ public:
 	size_t					getMaxClients() const;
 	size_t					getClientCount() const;
 	void					addUser(User* user);
+	void					delete_user(User* user);
 	// void					notify_others(const std::string& msg, User* skip);
 
 	std::string*			channelName;
@@ -52,6 +53,7 @@ private:
 
 	size_t max_clients;
 	size_t count_clients;
+	User*					_admin;
 };
 
 #endif

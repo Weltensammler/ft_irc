@@ -2,6 +2,7 @@
 #include <string>
 
 #include "server.hpp"
+#include "responses.hpp"
 
 void Server::pingClient()
 {

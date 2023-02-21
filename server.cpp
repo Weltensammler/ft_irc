@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <ctime>
 #include "server.hpp"
+#include "Message.hpp"
 
 Server::Server(std::string serverPass, int port): _pass(serverPass), _port(port)
 {
@@ -156,6 +157,9 @@ int Server::readInput(int client_no)
 	}
 	else
 		return (1);
+
+	//std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
+	Message	*parsed_message = new Message(std::string(buf, 0, bytesRecv));
 
 	// std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
 

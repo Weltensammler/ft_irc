@@ -19,9 +19,14 @@ void Server::pingClient()
 			std::cerr << "Problem with Server-Ping" << std::endl;
 			return;
 		}
-		// comparing sendet string to recieved string
-		// If they are equal, comparing timestamps
-		// if there difference is bigger than TIMEOUT -> killUser
-		// if (string)
-	}
+        timeNow = std::time(NULL);
+        // timestamps of now and the response of a user
+        if (user.getTime() - timeNow > TIMEOUT)
+        {
+            // if the difference is bigger than TIMEOUT -> killUser
+            std::cout << user.getNick() << " has been killed caused by ping timeout" << std::endl;
+           //killUser(user, "ping timeout");
+        }
+        
+    }
 }

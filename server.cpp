@@ -21,6 +21,7 @@ std::string	Server::getPass() const {
 	return (this->_pass);
 }
 
+void Server::createServer(void)
 User*	Server::findByFd(int clientFd) {
 	std::vector<User*>::iterator itr;
 	for (itr=begin(this->_userList); itr != end(this->_userList); ++itr) {
@@ -145,6 +146,13 @@ int Server::readInput(int client_no)
 		// Display message
 		std::cout << "Received: " << std::string(buf, 0, bytesRecv) << std::endl;
 	}
+	//parsing buffer to vector of two string elements
+		//first element is prefix or empty
+		//second element is always Command and Parameters to it
+
+	//std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
+
+	// WORK WITH BUFFER AFTER PARSING
 
 	/* Whole authUser can be under the "AcceptCall" function - will be moved later */
 	User* activeUser = this->findByFd(this->clients[client_no].fd);
@@ -319,3 +327,33 @@ void	Server::pollLoop()
 	return (NULL);
 } */
 
+void	Server::killUser(User * user)
+{
+	std::vector<Channel*>::iterator start = user->getChannels().begin();
+	std::vector<Channel*>::iterator end = user->getChannels().end();
+	if (user->getChannels().size() > 0)
+	{	
+		while (start != end)
+		{
+			std::vector<Channel*> channels = user->getChannels();
+			channels[0]->delete_user(user);
+			user->getChannels().erase(start);
+			start++;
+		}
+	}
+	std::vector<User*>::iterator start_U = _userList.begin();
+	std::vector<User*>::iterator end_U = _userList.end();
+	if (_userList.size() > 0)
+	{
+		while (start_U != end_U)
+		{
+			if (*start_U == user)
+			{
+				_userList.erase(start_U);
+				break ;
+			}
+			start_U++;
+		}
+	}
+	delete user;
+}

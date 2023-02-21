@@ -71,6 +71,15 @@ public:
 	//void					reply(const std::string& reply_msg);
 	//void					execute_join_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
 	//void 					write_msg(const std::string& msg) const;
+	void					execute_kick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
+	void 					execute_invite_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
+	void 					execute_quit_cmd(const std::string& cmd_name, std::vector<std::string> args);
+	void					execute_ping_cmd(const std::string& cmd_name, std::vector<std::string> args);
+	void					execute_nick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
+	void					execute_user_cmd();
+
+	std::vector<Channel *>	getChannels();
+	const Channel*			get_channel_if_in(const std::string& channel_name);
 
 
 	std::vector<Channel *>	getChannels();

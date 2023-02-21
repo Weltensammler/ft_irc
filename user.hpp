@@ -28,6 +28,7 @@ class Server;
 class User {
 public:
 	User(pollfd &client, char* host, char* service, Server* server);
+
 	User&					operator=(const User &src);
 	~User();
 

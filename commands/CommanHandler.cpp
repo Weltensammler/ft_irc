@@ -43,9 +43,9 @@ void CommandHandler::start(User* user, const std::string& message) // client = u
 			{
 				user.execute_join_cmd(user, cmd_name, cmd_args);
 			}
-			else if (cmd_name.compare("PASS") == 0)
+			else if (cmd_name.compare("KICK") == 0)
 			{
-				
+				user.execute_kick_cmd(user, cmd_name, cmd_args);
 			}
 		}
 		catch (const std::out_of_range& e) // thrown by vector or string

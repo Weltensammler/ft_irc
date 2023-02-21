@@ -229,3 +229,33 @@ void	Server::pollLoop()
 	return (NULL);
 } */
 
+void	Server::killUser(User * user)
+{
+	std::vector<Channel*>::iterator start = user->getChannels().begin();
+	std::vector<Channel*>::iterator end = user->getChannels().end();
+	if (user->getChannels().size() > 0)
+	{	
+		while (start != end)
+		{
+			std::vector<Channel*> channels = user->getChannels();
+			channels[0]->delete_user(user);
+			user->getChannels().erase(start);
+			start++;
+		}
+	}
+	std::vector<User*>::iterator start_U = _userList.begin();
+	std::vector<User*>::iterator end_U = _userList.end();
+	if (_userList.size() > 0)
+	{
+		while (start_U != end_U)
+		{
+			if (*start_U == user)
+			{
+				_userList.erase(start_U);
+				break ;
+			}
+			start_U++;
+		}
+	}
+	delete user;
+}

@@ -38,6 +38,8 @@ class Server {
 		int						fd_server;
 		struct pollfd 			clients[1024];
 
+		void					killUser(User * user);
+
 		// Channel*				getChannel(const std::string& channel_name);
 
 	private:

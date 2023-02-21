@@ -43,8 +43,8 @@ User* Channel::getAdmin() const
 
 const User* Channel::get_user_if_in(const std::string& user_name) const
 {
-	std::vector<User*>::iterator start = this->_userLogList.begin();
-	std::vector<User*>::iterator end = this->_userLogList.end();
+	std::vector<User*>::iterator start = *this->_userLogList.begin();
+	std::vector<User*>::iterator end = *this->_userLogList.end();
 
 	while (start != end)
 	{
@@ -63,7 +63,7 @@ void Channel::delete_user(User* user)
 	std::vector<User*>::iterator start = this->_userLogList.begin();
 	std::vector<User*>::iterator end = this->_userLogList.end();
 
-	if (this->_userLogList.size == 0)
+	if (this->_userLogList.size() == 0)
 	{
 		return;
 	}
@@ -79,7 +79,7 @@ void Channel::delete_user(User* user)
 
 	if (this->_admin == user)
 	{
-		_admin = this->_userLogList.begin();
+		_admin = *this->_userLogList.begin();
 		std::cout << _admin->getNick() << " is now admin of channel: " << this->getName() << std::endl;
 	}
 }

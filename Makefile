@@ -6,6 +6,7 @@ NAME		= irc
 SRC			= main.cpp \
 				server.cpp \
 				user.cpp \
+				channel.cpp \
 				ping_pong.cpp
 
 OBJ			= $(SRC:cpp=o)

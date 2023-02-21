@@ -31,7 +31,10 @@ int main(int argc, char** argv)
 /* 	std::string serverName(argv[3]); */
 
 	Server ourServer(serverPass, port);
-    ourServer.createServer();
+	if (ourServer.createServer() != 1) {
+		std::cout << "Error with server creation" << std::endl; 
+		return (0);
+	}
 	// fd_global = ourServer.fd_server;
 	/* signal(SIGINT, siginthandler);
 	signal(SIGQUIT, siginthandler); */

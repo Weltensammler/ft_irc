@@ -42,8 +42,7 @@ class Server {
 		Channel*				findChannel(std::string name); // finds a channel by name
 
 		// Channel*				getChannel(const std::string& channel_name);
-
-	private:
+		void					addChannel(Channel* newChannel);
 		int						isUserInServer(char* host); // checks if user has already been registered before
 		void					reconnectUser(pollfd &client, char* host, char* service); // reconnects user (by host) to existing user profile
 
@@ -55,6 +54,7 @@ class Server {
 		int						readInput(int client_no);
 		void					acceptCall();
 
+	private:
 		int						_port;
 		std::string				_pass;
 		std::string				_serverName;

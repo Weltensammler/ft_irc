@@ -358,3 +358,9 @@ void	Server::killUser(User * user)
 	}
 	delete user;
 }
+
+
+void	Server::addChannel(Channel * newChannel)
+{
+	this->_channelList.push_back(newChannel);
+}

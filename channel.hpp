@@ -32,6 +32,7 @@ public:
 	void					addBanned(User* toBan); // adds user to Banned list
 	bool					ifBanned(User* ifBan); // checks if user is banned from channel;
 	void					deleteUser(std::string _nick);
+	void					deleteChannel(std::string channel);
 
 	const std::string*		getName();
 	size_t					getMaxClients() const;
@@ -39,19 +40,16 @@ public:
 	void					addUser(User* user);
 	void					delete_user(User* user);
 	std::string				findAllUsers();
-	int						ifOperator();
+	int						ifOperator(std::string _nick);
 	// void					notify_others(const std::string& msg, User* skip);
 
 	// std::string*			channelName;
 
 
-
-
-
 private:
 	std::string				_channelName;
-	// size_t const			_maxClients;
-	// size_t				_countClients;
+	size_t const			_maxClients;
+	size_t					_countClients;
 
 	User*					_creatorUser; // user who created channel will always be operator
 	std::vector<User*> 		_operatorList; // all operators on channel

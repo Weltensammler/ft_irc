@@ -2,23 +2,29 @@
 #include "server.hpp"
 #include "channel.hpp"
 
-
-#include "commanHandler.hpp"
+#include "CommanHandler.hpp"
 
 // -----------------------
 /* Currently only returns the nickname, because other data has to be added/checked still */
-std::string User::getPrefix() const
+std::string User::getPrefix()
  {
-	std::string return_msg = this->getNick();
+	std::string return_msg; // = (*this->getNick());
+	char* buf = this->_host;
+	std::string hostname;
+	hostname.assign(buf);
 
-	/* if (this->_nick.size() != 0)
+	if ((*this->getNick()).size() != 0)
 	{
-		return_msg += "!" + this->getUsername()
-		if (this->_hostname.size() != 0)
+		return_msg += "!" + (*this->getNick());
+		if (hostname.size() != 0)
 		{
-			return_msg += "@" + this->getHostname(); // no hostname func yet
+			return_msg += "@" + hostname;
 		}
-	} */
+	}
+	else
+	{
+		return_msg = (*this->getNick());
+	}
 	return(return_msg);
  }
 
@@ -30,10 +36,15 @@ std::string User::getPrefix() const
 	from without the need for additional queries.
 	-> calling start in server leading to here.
 */
-void User::reply(const std::string& reply_msg)
+void User::reply(/*const std::string& reply_msg*/ const char* reply_msg)
 {
-	std::cout << "This message from reply function under User object\n";
-	/* write(":" + getPrefix() + " " + reply_msg); */
+	// std::cout << "This message from reply function under User object\n";
+	std::string str_reply;
+	str_reply.assign(reply_msg);
+
+	std::string sendMessage = ":" + getPrefix() + " " + str_reply;
+	// write(":" + getPrefix() + " " + reply_msg);
+	send(*_fd, sendMessage.c_str(), sizeof(sendMessage), 0);
 }
 
 /*
@@ -41,63 +52,63 @@ void User::reply(const std::string& reply_msg)
 */
 void User::execute_join_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
 {
-	if(this->_server.findChannel(args) == NULL)
+	if(this->_server->findChannel(args[0]) == NULL)
 	{
-		Channel* newChannel = new Channel(args);
-		this->_server.addChannel(newChannel);
+		Channel* newChannel = new Channel(args[0]);
+		this->_server->addChannel(newChannel);
 		newChannel->addUser(this);
 		this->_channels.push_back(newChannel);
 		newChannel->addCreator(this);
 	}
 	else
 	{
-		Channel* foundChannel = this->_server.findChannel(args);
-		if (foundChannel.ifBanned(this) == true)
+		Channel* foundChannel = this->_server->findChannel(args[0]);
+		if (foundChannel->ifBanned(this) == true)
 		{
-			this.reply(ERR_BANNEDFROMCHAN(foundChannel->getName()));
+			this->reply(ERR_BANNEDFROMCHAN(args[0]));
 		}
 		else
 		{
 			// maximum of 20 channels per conenction
-			if (foundChannel->getClientCount() >= foundChannel->getmaxClients())
+			if (foundChannel->getClientCount() >= foundChannel->getMaxClients())
 			{
-				this->reply(ERR_CHANNELISFULL(this->getNick(), foundChannel._channelName));
-  ///TODO		return ;
+				this->reply(ERR_CHANNELISFULL(this->getNick(), args[0]));
+				return ;
 			}
 			if (this->_channels.size() >= 20)
 			{
-				this->reply(ERR_TOOMANYCHANNELS(this->getNick(), foundChannel));
+				this->reply(ERR_TOOMANYCHANNELS(this->getNick(), args[0]));
 				return ;
 			}
 			foundChannel->addUser(this);
 			this->_channels.push_back(foundChannel);
-			this.reply(RPL_NAMREPLY(foundChannel.findAllUsers()) //Need to Come back
-			_countClients++;
+			this->reply(RPL_NAMREPLY(args[0], foundChannel->findAllUsers()));
+			// _countClients++;
 		}
 	}
-
-					00      01
-// format: KICK <channel> <user> [<comment>]
-void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
-{
-	if(this->_channel.ifOperator(*args[1]) == NULL)
-	{
-		
-	}
-
 }
 
+// format: KICK <channel> <user> [<comment>]
+// void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
+// {
+// 	if(this->_channels.ifOperator(args[1]) == NULL)
+// 	{
+		
+// 	}
+
+// }
 
 
-void User::write_msg(const std::string& msg) const
+
+/* void User::write_msg(const std::string& msg) const
 {
 	std::string new_msg = msg + "\r\n"; // per documentation definition line in irc end with \r
 	if (send(_fd, new_msg.c_str(), new_msg.length(), 0) < 0) // c_str =copy of the string is sent
 	{
 		std::cerr << "error when notifying memebers of channell about someone joining\n";
 	}
-}
-					00      01
+} */
+
 // format: KICK <channel> <user> [<comment>]
 void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
 {
@@ -111,18 +122,18 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 	std::string target = args[1];
 	std::string reason = "";
 
-	// fill in reasons
-	if (args.size() >= 3 && (args[2][0] != ':' || args[2].size() >= 1))
+	// fill in reasons - commented out by Madis during debugging 
+	/* if (args.size() >= 3 && (args[2][0] != ':' || args[2].size() >= 1))
 	{
 		std::vector<std::string>::iterator start = args.begin() + 2;
-		std::vector<std::string>::iterator start = args.end();
+		std::vector<std::string>::iterator end = args.end();
 
 		while (start != end)
 		{
 			reason.append((*start) + " ");
 			start++;
 		}
-	}
+	} */
 
 	// check if user that wants to kick someone is in same channel
 	Channel* foundChannel = user->get_if_in_channel(const std::string& channel_name);
@@ -152,9 +163,9 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 
 	channel->notify_others(RPL_KICK(user, channel_name, target, reason), this);
 
-	target_user->deleteChannel(target_user->_get_channel_if_in(channel_name));
+	target_user->deleteChannel(target_user->get_channel_if_in(channel_name));
 
-	foundChannel->deleteUser(target)
+	foundChannel->deleteUser(target);
 
 	
 	std::cout << target << " has been kicked from channel " << channel_name << ".\n";
@@ -222,12 +233,20 @@ void User::execute_ping_cmd(const std::string& cmd_name, std::vector<std::string
 // 	}
 // }
 
+// std::string convert_to_string(char* string)
+// {
+// 	std::string str; // = (*this->getNick());
+// 	str.assign(string);
+
+// 	return (str);
+// }
+
 // format: NICK <nickname>
 void User::execute_nick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
 {
 	if (args.size() == 0)
 	{
-		user->reply(ERR_NONICKNAMEGIVEN(user->getNick()));
+		user->reply(ERR_NONICKNAMEGIVEN((*user->getNick()).c_str())); // c_str returns c version of the std::string
 		return;
 	}
 
@@ -235,7 +254,7 @@ void User::execute_nick_cmd(User* user, const std::string& cmd_name, std::vector
 
 	if (user->_server->findByNick(nickname) != NULL)
 	{
-		user->reply(ERR_NICKNAMEINUSE(user->getNick()));
+		user->reply(ERR_NICKNAMEINUSE(/*convert_to_string*/(user->getNick())));
 		return;
 	}
 
@@ -260,7 +279,7 @@ void User::execute_user_cmd(User* user, std::vector<std::string> args)
 
  if (args.size() < 4)
  {
-	user->reply(ERR_NEEDMOREPARAMS(user->getNick()), "USER");
+	user->reply(ERR_NEEDMOREPARAMS(user->getNick(), "USER");
 	return;
  }
 

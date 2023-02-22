@@ -63,12 +63,12 @@ public:
 	//void					joinChannel(); // makes user join a channel; prompts server to send message to all relevant users about joining; 
 	//void					leaveChannel(); // makes user itself leave channel; sends message that user left channel;
 	//void					createChannel(); // ourUser.createChannel() _ creates new channel, and user is made operator; called inside joinChannel();
-	//void					removeChannel(); // if last user disconnects, channel is removed?;
+	void					deleteChannel(std::string channel);
 
 
 	// All following functions are in userUtils.cpp file:
-	//std::string 			getPrefix() const;
-	void					reply(const std::string& reply_msg);
+	std::string 			getPrefix();
+	void					reply(const char * reply_msg);
 	void					execute_join_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
 	//void 					write_msg(const std::string& msg) const;
 	void					execute_kick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
@@ -83,7 +83,6 @@ public:
 
 	bool					isOperator(); // server operator: channel operators are stored in channel object
 	void					setOperator();
-	void					deleteChannel(std::string _nick);
 
 
 

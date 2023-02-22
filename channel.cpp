@@ -5,7 +5,7 @@ Channel::Channel(std::string newName) : _channelName(newName), _maxClients(60) {
 }
 
 Channel&	Channel::operator=(const Channel &src) {
-	this->channelName = src.channelName;
+	this->_channelName = src._channelName;
 	this->_bannedList = src._bannedList;
 	this->_operatorList = src._operatorList;
 	return (*this);
@@ -108,13 +108,15 @@ void	Channel::addUser(User* user)
 	}
 } */
 
-std::string		Channel::findAllUsers()
+std::string	Channel::findAllUsers()
 {
 		std::string str;
 
-		std::vector<Channel*>::iterator itr;
-		for (itr=begin(this->_userLogList;); itr != end(this->_userLogList;); ++itr) {
-			str += *(*itr)._nick + " ";
+		std::vector<User*>::iterator itr;
+		for (itr = begin(this->_userLogList); itr != end(this->_userLogList); ++itr)
+		{
+			str += *(*itr)->getNick() + " ";
+		}
 			return (str);
 }
 
@@ -123,18 +125,22 @@ int		Channel::ifOperator(std::string _nick)
 		std::string str;
 
 		std::vector<User*>::iterator itr;
-		for (itr=begin(this->_operatorList); itr != end(this->_operatorList); ++itr) {
-			if(_nick == *(*itr).getNick())
+		for (itr=begin(this->_operatorList); itr != end(this->_operatorList); ++itr)
+		{
+			if(_nick == *(*itr)->getNick())
 				return(1);
+		}
 		return (0);
 }
 
-void		Channel::deleteUser(std::string _nick)
+void	Channel::deleteUser(std::string _nick)
 {
 		std::string str;
 
 		std::vector<User*>::iterator itr;
-		for (itr=begin(this->_userLogList); itr != end(this->_userLogList); ++itr) {
-			if(_nick == *(*itr).getNick())
+		for (itr=begin(this->_userLogList); itr != end(this->_userLogList); ++itr)
+		{
+			if(_nick == *(*itr)->getNick())
 				_userLogList.erase(itr);
+		}
 }

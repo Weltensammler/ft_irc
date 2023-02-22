@@ -1,26 +1,27 @@
-#ifndef COMMANDHANDLER_HPP
-# define COMMANDHANDLER_HPP
+#ifndef COMMANHANDLER_HPP
+# define COMMANHANDLER_HPP
 
 #include <iostream>
 #include <sstream>
 #include <string>
-#include "Command.hpp"
 #include <map>
-#include "User.hpp"
+#include "server.hpp"
 
 class User;
-class Command;
+// class Command;
+class Message;
+class Server;
 
-class CommandHandler
+class CommanHandler
 {
 	private:
-		std::map<std::string, Command*> _commandos;
+		// std::map<std::string, Command*> _commandos;
 
 	public:
-		CommandHandler();
-		CommandHandler(const CommandHandler& obj);
-		CommandHandler& operator=(const CommandHandler& obj);
-		~CommandHandler();
+		CommanHandler();
+		CommanHandler(const CommanHandler& obj);
+		CommanHandler& operator=(const CommanHandler& obj);
+		~CommanHandler();
 
 		void start(User* user, const std::string& message);
 

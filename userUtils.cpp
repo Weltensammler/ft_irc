@@ -1,26 +1,26 @@
 #include "user.hpp"
 #include "server.hpp"
 #include "channel.hpp"
-
-
 #include "commanHandler.hpp"
+#include "responses.hpp"
+
 
 // -----------------------
 /* Currently only returns the nickname, because other data has to be added/checked still */
-std::string User::getPrefix() const
- {
-	std::string return_msg = this->getNick();
+// std::string User::getPrefix() const
+//  {
+// 	std::string return_msg = this->getNick();
 
-	/* if (this->_nick.size() != 0)
-	{
-		return_msg += "!" + this->getUsername()
-		if (this->_hostname.size() != 0)
-		{
-			return_msg += "@" + this->getHostname(); // no hostname func yet
-		}
-	} */
-	return(return_msg);
- }
+// 	/* if (this->_nick.size() != 0)
+// 	{
+// 		return_msg += "!" + this->getUsername()
+// 		if (this->_hostname.size() != 0)
+// 		{
+// 			return_msg += "@" + this->getHostname(); // no hostname func yet
+// 		}
+// 	} */
+// 	return(return_msg);
+//  }
 
 /*
 *	Use of the extended prefix (['!' <user> ] ['@' <host> ]) must
@@ -32,8 +32,9 @@ std::string User::getPrefix() const
 */
 void User::reply(const std::string& reply_msg)
 {
-	std::cout << "This message from reply function under User object\n";
+	// std::cout << "This message from reply function under User object\n";
 	/* write(":" + getPrefix() + " " + reply_msg); */
+	send(*_fd, reply_msg.c_str(), sizeof(reply_msg), 0);
 }
 
 /*
@@ -161,48 +162,48 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 }
 
 // format: QUIT (:)[<quitmsg>]
-void User::execute_quit_cmd(const std::string& cmd_name, std::vector<std::string> args)
-{
-	//send quit msg
-	std::vector<Channel *> channel = getChannels();
-	for(int i = 0;  i < getChannels().size(); i++)
-	{
-		if (args.size() == 0)
-		{
-			channel[i]->notify_others("QUIT", this);
-			channel[i]->delete_user(this);
+// void User::execute_quit_cmd(const std::string& cmd_name, std::vector<std::string> args)
+// {
+// 	//send quit msg
+// 	std::vector<Channel *> channel = getChannels();
+// 	for(int i = 0;  i < getChannels().size(); i++)
+// 	{
+// 		if (args.size() == 0)
+// 		{
+// 			channel[i]->notify_others("QUIT", this);
+// 			channel[i]->delete_user(this);
 			
-		}
-		else if (args.size() > 0)
-		{
-			std::string quitmsg = args[0];
-			if (quitmsg.at(0) == ':')
-			{
-				quitmsg = quitmsg.substr(1);
-			}
-			channel[i]->notify_others("QUIT :" + args[0], this);
-			channel[i]->delete_user(this);
-		}
-	}
-	setFd(-1);
-	_isRegistered = false;
-	//killUser(this, "User hast quit"); //When command is implemented, we only need to call it
-}
+// 		}
+// 		else if (args.size() > 0)
+// 		{
+// 			std::string quitmsg = args[0];
+// 			if (quitmsg.at(0) == ':')
+// 			{
+// 				quitmsg = quitmsg.substr(1);
+// 			}
+// 			channel[i]->notify_others("QUIT :" + args[0], this);
+// 			channel[i]->delete_user(this);
+// 		}
+// 	}
+// 	setFd(-1);
+// 	_isRegistered = false;
+// 	//killUser(this, "User hast quit"); //When command is implemented, we only need to call it
+// }
 
 
 // format: PING <server1> [<server2>]
-void User::execute_ping_cmd(const std::string& cmd_name, std::vector<std::string> args)
-{
-	if (args.size() == 1)
-	{
-		if (!strcmp((const char *)args[0][0], (const char *)_host)) //comparing args[0] to servername, is _host the servername?
-		{
-			reply("PONG " + args[0]);
-		}
-		else
-		 reply(ERR_NOSUCHSERVER(args[0]));
-	}
-}
+// void User::execute_ping_cmd(const std::string& cmd_name, std::vector<std::string> args)
+// {
+// 	if (args.size() == 1)
+// 	{
+// 		if (!strcmp((const char *)args[0][0], (const char *)_host)) //comparing args[0] to servername, is _host the servername?
+// 		{
+// 			reply("PONG " + args[0]);
+// 		}
+// 		else
+// 		 reply(ERR_NOSUCHSERVER(args[0]));
+// 	}
+// }
 
 // format: INVITE <nickname> <channel>
 // void User::execute_invite_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
@@ -223,49 +224,49 @@ void User::execute_ping_cmd(const std::string& cmd_name, std::vector<std::string
 // }
 
 // format: NICK <nickname>
-void User::execute_nick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
-{
-	if (args.size() == 0)
-	{
-		user->reply(ERR_NONICKNAMEGIVEN(user->getNick()));
-		return;
-	}
+// void User::execute_nick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
+// {
+// 	if (args.size() == 0)
+// 	{
+// 		user->reply(ERR_NONICKNAMEGIVEN(user->getNick()));
+// 		return;
+// 	}
 
-	std::string nickname = args[0];
+// 	std::string nickname = args[0];
 
-	if (user->_server->findByNick(nickname) != NULL)
-	{
-		user->reply(ERR_NICKNAMEINUSE(user->getNick()));
-		return;
-	}
+// 	if (user->_server->findByNick(nickname) != NULL)
+// 	{
+// 		user->reply(ERR_NICKNAMEINUSE(user->getNick()));
+// 		return;
+// 	}
 
-	user->setNick(nickname);
-	user->reply(RPL_WELCOME(nickname));
-}
+// 	user->setNick(nickname);
+// 	user->reply(RPL_WELCOME(nickname));
+// }
 
-/*
-* format: USER <username> <hostname> <servername> <realname>
-* ***********************************************************
-* used in communication between servers to indicate new user
-* arriving on IRC, since only after both USER and NICK have been
-* received from a client does a user become registered.
-*/
-void User::execute_user_cmd(User* user, std::vector<std::string> args)
-{
- if (user->isRegistered())
- {
-	user->reply(ERR_ALREADYREGISTERED(user->getNick()));
-	return;
- }
+// /*
+// * format: USER <username> <hostname> <servername> <realname>
+// * ***********************************************************
+// * used in communication between servers to indicate new user
+// * arriving on IRC, since only after both USER and NICK have been
+// * received from a client does a user become registered.
+// */
+// void User::execute_user_cmd(User* user, std::vector<std::string> args)
+// {
+//  if (user->isRegistered())
+//  {
+// 	user->reply(ERR_ALREADYREGISTERED(user->getNick()));
+// 	return;
+//  }
 
- if (args.size() < 4)
- {
-	user->reply(ERR_NEEDMOREPARAMS(user->getNick()), "USER");
-	return;
- }
+//  if (args.size() < 4)
+//  {
+// 	user->reply(ERR_NEEDMOREPARAMS(user->getNick()), "USER");
+// 	return;
+//  }
 
- user->setUsername(args[0]);
- user->setRealname(args[3]);
- user->reply(RPL_WELCOME(user->getNick()));
+//  user->setUsername(args[0]);
+//  user->setRealname(args[3]);
+//  user->reply(RPL_WELCOME(user->getNick()));
 
-}
+// }

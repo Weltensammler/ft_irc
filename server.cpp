@@ -5,6 +5,8 @@
 
 Server::Server(std::string serverPass, int port): _pass(serverPass), _port(port)
 {
+	// _userList.push_back(NULL);
+	// _channelList.push_back(NULL);
 	std::cout << "Server Object Created" << std::endl;
 }
 
@@ -21,13 +23,15 @@ std::string	Server::getPass() const {
 	return (this->_pass);
 }
 
-// void Server::createServer(void)
-
 User*	Server::findByFd(int clientFd) {
 	std::vector<User*>::iterator itr;
-	for (itr=begin(this->_userList); itr != end(this->_userList); ++itr) {
-		if (clientFd == *(*itr)->getFd())
+	for (itr = begin(this->_userList); itr != end(this->_userList); itr++) {
+		std::cout << clientFd << std::endl;
+		std::cout << *(*itr)->getFd() << std::endl;
+		if (clientFd == *(*itr)->getFd()) {
+			std::cout << "REached here in FindbyFd" << std::endl;
 			return (*itr);
+		}
 	}
 	std::cerr << "User FD not found" << std::endl;
 	return (NULL);
@@ -126,7 +130,6 @@ int Server::createServer(void)
 //comented out to compile and work on authentification
 int Server::readInput(int client_no)
 {
-	time_t	timeNow = time(NULL); 
 	char buf[4096];
 	int i = 0;
 	memset(buf, 0, 4096);
@@ -155,52 +158,55 @@ int Server::readInput(int client_no)
 
 	// WORK WITH BUFFER AFTER PARSING
 
-	/* Whole authUser can be under the "AcceptCall" function - will be moved later */
-	User* activeUser = this->findByFd(this->clients[client_no].fd);
-	if (activeUser != 0) {
-		if (this->authUser(activeUser) == false && (timeNow - activeUser->getCreationTime() >= 60))
-		{
-			// add function here to: kick and remove user from server: kickUser()
-			return (-1);
-		}
-	}
-	else
-		return (1);
-
 	//std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
-	Message	*parsed_message = new Message(std::string(buf, 0, bytesRecv));
+	this->msg = new Message(std::string(buf, 0, bytesRecv));
+	this->msg->message = buf;
+	std::cout << "Reached in readInput" << std::endl;
 
 	// std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
 
 	// Send message
 	// std::string nick = "mjpro";
-	std::string user = "mj_nick";
-	std::string channel = "#ch1";
-	std::string message = buf;
+	// std::string user = "mj_nick";
+	// std::string channel = "#ch1";
+	// std::string message = buf;
 
-	std::ostringstream cmd;
-	cmd //<< "NICK " << nick << "\r\n"
-		<< "USER " << user << "\r\n"
-		// 	// << "JOIN " << channel << "\r\n"
-		<< "PRIVMSG " << channel << " :" << message << "\r\n";
-	std::string cmd_str = cmd.str();
-	for (int i = 1; i < 1024; i++)
-	{
-		if (clients[i].fd != -1)
-		{
-			send(clients[i].fd, cmd_str.c_str(), cmd_str.size(), 0);
-			// std::cout << "Message: " << buf << std::endl;
-		}
-	}
+	// std::ostringstream cmd;
+	// cmd //<< "NICK " << nick << "\r\n"
+	// 	<< "USER " << user << "\r\n"
+	// 	// 	// << "JOIN " << channel << "\r\n"
+	// 	<< "PRIVMSG " << channel << " :" << message << "\r\n";
+	// std::string cmd_str = cmd.str();
+	// for (int i = 1; i < 1024; i++)
+	// {
+	// 	if (clients[i].fd != -1)
+	// 	{
+	// 		send(clients[i].fd, cmd_str.c_str(), cmd_str.size(), 0);
+	// 		// std::cout << "Message: " << buf << std::endl;
+	// 	}
+	// }
 	// std::cout << "Message is as:" << message << "$\n";
 	// send(clientfd, buf, bytesRecv + 1, 0);
 	// }
 	return (1);
 }
 
-/* Accepting a call */
-void Server::acceptCall()
+void Server::sendmsg(User* foundUser)
 {
+	for (int i = 1; i < 1024; i++)
+	{
+		if (clients[i].fd != -1)
+		{
+			send(*foundUser->getFd(), this->msg->message.c_str(), this->msg->message.size(), 0);
+			// std::cout << "Message: " << buf << std::endl;
+		}
+	}
+}
+
+/* Accepting a call */
+int Server::acceptCall()
+{
+	time_t	timeNow = time(NULL);
 	for (int i = 0; i < 1024; i++)
 	{
 		if ((this->clients[i].revents & POLLIN) == POLLIN) // fd is ready for reading
@@ -220,7 +226,7 @@ void Server::acceptCall()
 				if (userSocket == -1)
 				{
 					std::cerr << "Problem with client connecting!" << std::endl;
-					return;
+					return (-1);
 				}
 
 				// TODO the next 10 lines are not needed, just there for testing purpose
@@ -249,6 +255,16 @@ void Server::acceptCall()
 					if (this->isUserInServer(host) == 1)
 						this->reconnectUser(clients[j], host, service);
 					else {
+						std::cout << "fd_server: " << this->fd_server << std::endl;
+						std::cout << "handler: " << this->handler << std::endl;
+						std::cout << "msg: " << this->msg << std::endl;
+						std::cout << "pass: " << this->_pass << std::endl;
+						std::cout << "port: " << this->_port << std::endl;
+						std::cout << "serverName: " << this->_serverName << std::endl;
+						// std::cout << "channelList: " << this->_channelList[0] << std::endl;
+						// std::cout << "userList: " << this->_userList[0] << std::endl;
+						// std::cout << "channelList: " << this->_channelList[0] << std::endl;
+						std::cout << "*********************************************************************************" << std::endl;
 						User	*newUser = new User(clients[j], host, service, this);
 						this->_userList.push_back(newUser);
 					}
@@ -270,13 +286,25 @@ void Server::acceptCall()
 			}
 			else // data from an existing connection, recieve it
 			{
-				// authent.....
+				User* foundUser = this->findByFd(this->clients[i].fd);
+				if (foundUser != 0) {
+					if (this->authUser(foundUser) == false && (timeNow - foundUser->getCreationTime() >= 60))
+					{
+						// add function here to kick user from server: kickUser()
+						return (-1);
+					}
+				}
+				else
+					return (1);
+				std::cout << "Reached here" << std::endl;
 				this->readInput(i);
-				//executor; CMD handler
+				handler->start(foundUser, msg->message);
+				sendmsg(foundUser);
 				// AnswerToClient
 			}
 		}
 	}
+	return (1);
 }
 
 void	Server::initClient()

@@ -5,8 +5,8 @@
 
 Server::Server(std::string serverPass, int port): _pass(serverPass), _port(port)
 {
-	_userList.push_back(NULL);
-	_channelList.push_back(NULL);
+	// _userList.push_back(NULL);
+	// _channelList.push_back(NULL);
 	std::cout << "Server Object Created" << std::endl;
 }
 
@@ -268,9 +268,9 @@ void Server::acceptCall()
 						std::cout << "pass: " << this->_pass << std::endl;
 						std::cout << "port: " << this->_port << std::endl;
 						std::cout << "serverName: " << this->_serverName << std::endl;
-						std::cout << "channelList: " << this->_channelList[0] << std::endl;
-						std::cout << "userList: " << this->_userList[0] << std::endl;
-						std::cout << "channelList: " << this->_channelList[0] << std::endl;
+						// std::cout << "channelList: " << this->_channelList[0] << std::endl;
+						// std::cout << "userList: " << this->_userList[0] << std::endl;
+						// std::cout << "channelList: " << this->_channelList[0] << std::endl;
 						std::cout << "*********************************************************************************" << std::endl;
 						User	*newUser = new User(clients[j], host, service, this);
 						this->_userList.push_back(newUser);

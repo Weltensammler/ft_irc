@@ -68,7 +68,7 @@ public:
 
 	// All following functions are in userUtils.cpp file:
 	//std::string 			getPrefix() const;
-	//void					reply(const std::string& reply_msg);
+	void					reply(const std::string& reply_msg);
 	void					execute_join_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
 	//void 					write_msg(const std::string& msg) const;
 	void					execute_kick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);

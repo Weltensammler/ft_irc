@@ -26,11 +26,12 @@
 	from without the need for additional queries.
 	-> calling start in server leading to here.
 */
-// void User::reply(const std::string& reply_msg)
-// {
-// 	std::cout << "This message from reply function under User object\n";
-// 	/* write(":" + getPrefix() + " " + reply_msg); */
-// }
+void User::reply(const std::string& reply_msg)
+{
+	// std::cout << "This message from reply function under User object\n";
+	/* write(":" + getPrefix() + " " + reply_msg); */
+	send(*_fd, reply_msg.c_str(), sizeof(reply_msg), 0);
+}
 
 /*
 * format: JOIN <channel>{,<channel>} [<key>{,<key>}]

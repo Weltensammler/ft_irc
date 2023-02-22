@@ -76,6 +76,7 @@ const std::string* Channel::getName()
 	return (&this->_channelName);
 }
 
+
 size_t Channel::getMaxClients() const
 {
 	return (this->_maxClients);
@@ -106,3 +107,34 @@ void	Channel::addUser(User* user)
 		start++;
 	}
 } */
+
+std::string		Channel::findAllUsers()
+{
+		std::string str;
+
+		std::vector<Channel*>::iterator itr;
+		for (itr=begin(this->_userLogList;); itr != end(this->_userLogList;); ++itr) {
+			str += *(*itr)._nick + " ";
+			return (str);
+}
+
+int		Channel::ifOperator(std::string _nick)
+{
+		std::string str;
+
+		std::vector<User*>::iterator itr;
+		for (itr=begin(this->_operatorList); itr != end(this->_operatorList); ++itr) {
+			if(_nick == *(*itr).getNick())
+				return(1);
+		return (0);
+}
+
+void		Channel::deleteUser(std::string _nick)
+{
+		std::string str;
+
+		std::vector<User*>::iterator itr;
+		for (itr=begin(this->_userLogList); itr != end(this->_userLogList); ++itr) {
+			if(_nick == *(*itr).getNick())
+				_userLogList.erase(itr);
+}

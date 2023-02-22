@@ -118,3 +118,14 @@ void	User::setClient(pollfd &client) {
 void	User::setService(char* service) {
 	this->_service = service;
 }
+
+void		Channel::deleteChannel(std::string channel)
+{
+		std::string str;
+
+		std::vector<Channel*>::iterator itr;
+		for (itr=begin(this->_channels); itr != end(this->_channels); ++itr) {
+			if(channel == *(*itr).getName())
+				_channels.erase(itr);
+		}
+}

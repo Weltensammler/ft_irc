@@ -9,6 +9,7 @@ SRC			= main.cpp \
 				ping_pong.cpp \
 				Message.cpp \
 				channel.cpp \
+				userUtils.cpp \
 
 OBJ			= $(SRC:cpp=o)
 

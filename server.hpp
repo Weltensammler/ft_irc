@@ -39,6 +39,7 @@ class Server {
 		struct pollfd 			clients[1024];
 
 		void					killUser(User * user);
+		Channel*				findChannel(std::string name); // finds a channel by name
 
 		// Channel*				getChannel(const std::string& channel_name);
 
@@ -48,7 +49,6 @@ class Server {
 
 		User*					findByFd(int clientFd); // finds user by FD
 		User*					findByNick(std::string nick); // finds user by nickname
-		Channel*				findChannel(std::string name); // finds a channel by name
 		// User*					findByHost()
 		bool					authUser(User* activeUser); // checks if user is authed, meaning: pass, nick and username provided
 		void					kickUser(User* toBeKicked);

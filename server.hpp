@@ -16,10 +16,14 @@
 
 #include "user.hpp"
 #include "responses.hpp"
+#include "Message.hpp"
+#include "CommanHandler.hpp"
 /* #include "channel.hpp" */
 
 class Channel;
 class User;
+class Message;
+class CommanHandler;
 
 class Server {
 	public:
@@ -37,6 +41,8 @@ class Server {
 
 		int						fd_server;
 		struct pollfd 			clients[1024];
+		Message*				msg;
+		CommanHandler*			handler;
 
 		void					killUser(User * user);
 
@@ -53,7 +59,8 @@ class Server {
 		bool					authUser(User* activeUser); // checks if user is authed, meaning: pass, nick and username provided
 		void					kickUser(User* toBeKicked);
 		int						readInput(int client_no);
-		void					acceptCall();
+		int						acceptCall();
+		void					sendmsg(User* foundUser);
 
 		int						_port;
 		std::string				_pass;

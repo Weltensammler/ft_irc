@@ -3,6 +3,8 @@
 
 # include "server.hpp"
 
+class User;
+
 typedef struct	s_prefix
 {
 	std::string	nick;
@@ -22,6 +24,8 @@ class Message // CURRENT STATUS: Can only generate Messages with commands NICK, 
 		std::string						freetext;	// CURRENT STATUS: DOES NOT GET POPULATED
 
 	public:
+		User*					p_user;
+		std::string				message;
 		Message();
 		Message(std::string message_raw);
 		Message(const Message &original);

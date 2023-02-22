@@ -5,6 +5,8 @@
 
 Server::Server(std::string serverPass, int port): _pass(serverPass), _port(port)
 {
+	_userList.push_back(NULL);
+	_channelList.push_back(NULL);
 	std::cout << "Server Object Created" << std::endl;
 }
 
@@ -20,8 +22,6 @@ void	Server::setPass(std::string pass) {
 std::string	Server::getPass() const {
 	return (this->_pass);
 }
-
-// void Server::createServer(void)
 
 User*	Server::findByFd(int clientFd) {
 	std::vector<User*>::iterator itr;
@@ -156,9 +156,9 @@ int Server::readInput(int client_no)
 	// WORK WITH BUFFER AFTER PARSING
 
 	/* Whole authUser can be under the "AcceptCall" function - will be moved later */
-	User* activeUser = this->findByFd(this->clients[client_no].fd);
-	if (activeUser != 0) {
-		if (this->authUser(activeUser) == false && (timeNow - activeUser->getCreationTime() >= 60))
+	msg->p_user = this->findByFd(this->clients[client_no].fd);
+	if (msg->p_user != 0) {
+		if (this->authUser(msg->p_user) == false && (timeNow - msg->p_user->getCreationTime() >= 60))
 		{
 			// add function here to: kick and remove user from server: kickUser()
 			return (-1);
@@ -168,34 +168,47 @@ int Server::readInput(int client_no)
 		return (1);
 
 	//std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
-	Message	*parsed_message = new Message(std::string(buf, 0, bytesRecv));
+	this->msg = new Message(std::string(buf, 0, bytesRecv));
+	this->msg->message = buf;
 
 	// std::vector<std::string> bufferParsed = parseIncomingMsg(std::string(buf, 0, bytesRecv));
 
 	// Send message
 	// std::string nick = "mjpro";
-	std::string user = "mj_nick";
-	std::string channel = "#ch1";
-	std::string message = buf;
+	// std::string user = "mj_nick";
+	// std::string channel = "#ch1";
+	// std::string message = buf;
 
-	std::ostringstream cmd;
-	cmd //<< "NICK " << nick << "\r\n"
-		<< "USER " << user << "\r\n"
-		// 	// << "JOIN " << channel << "\r\n"
-		<< "PRIVMSG " << channel << " :" << message << "\r\n";
-	std::string cmd_str = cmd.str();
-	for (int i = 1; i < 1024; i++)
-	{
-		if (clients[i].fd != -1)
-		{
-			send(clients[i].fd, cmd_str.c_str(), cmd_str.size(), 0);
-			// std::cout << "Message: " << buf << std::endl;
-		}
-	}
+	// std::ostringstream cmd;
+	// cmd //<< "NICK " << nick << "\r\n"
+	// 	<< "USER " << user << "\r\n"
+	// 	// 	// << "JOIN " << channel << "\r\n"
+	// 	<< "PRIVMSG " << channel << " :" << message << "\r\n";
+	// std::string cmd_str = cmd.str();
+	// for (int i = 1; i < 1024; i++)
+	// {
+	// 	if (clients[i].fd != -1)
+	// 	{
+	// 		send(clients[i].fd, cmd_str.c_str(), cmd_str.size(), 0);
+	// 		// std::cout << "Message: " << buf << std::endl;
+	// 	}
+	// }
 	// std::cout << "Message is as:" << message << "$\n";
 	// send(clientfd, buf, bytesRecv + 1, 0);
 	// }
 	return (1);
+}
+
+void Server::sendmsg()
+{
+	for (int i = 1; i < 1024; i++)
+	{
+		if (clients[i].fd != -1)
+		{
+			send(*(msg->p_user->getFd()), this->msg->message.c_str(), this->msg->message.size(), 0);
+			// std::cout << "Message: " << buf << std::endl;
+		}
+	}
 }
 
 /* Accepting a call */
@@ -249,6 +262,16 @@ void Server::acceptCall()
 					if (this->isUserInServer(host) == 1)
 						this->reconnectUser(clients[j], host, service);
 					else {
+						std::cout << "fd_server: " << this->fd_server << std::endl;
+						std::cout << "handler: " << this->handler << std::endl;
+						std::cout << "msg: " << this->msg << std::endl;
+						std::cout << "pass: " << this->_pass << std::endl;
+						std::cout << "port: " << this->_port << std::endl;
+						std::cout << "serverName: " << this->_serverName << std::endl;
+						std::cout << "channelList: " << this->_channelList[0] << std::endl;
+						std::cout << "userList: " << this->_userList[0] << std::endl;
+						std::cout << "channelList: " << this->_channelList[0] << std::endl;
+						std::cout << "*********************************************************************************" << std::endl;
 						User	*newUser = new User(clients[j], host, service, this);
 						this->_userList.push_back(newUser);
 					}
@@ -272,7 +295,8 @@ void Server::acceptCall()
 			{
 				// authent.....
 				this->readInput(i);
-				//executor; CMD handler
+				handler->start(msg->p_user, msg->message);
+				sendmsg();
 				// AnswerToClient
 			}
 		}

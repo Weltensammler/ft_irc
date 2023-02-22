@@ -59,8 +59,8 @@ class Server {
 		bool					authUser(User* activeUser); // checks if user is authed, meaning: pass, nick and username provided
 		void					kickUser(User* toBeKicked);
 		int						readInput(int client_no);
-		void					acceptCall();
-		void					sendmsg();
+		int						acceptCall();
+		void					sendmsg(User* foundUser);
 
 		int						_port;
 		std::string				_pass;

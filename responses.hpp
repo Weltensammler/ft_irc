@@ -83,7 +83,7 @@
 # define ERR_CHANNELISFULL(nick, channel)		"471 " + nick + " " + channel + " channel is full"
 # define ERR_UNKNOWNMODE		472
 # define ERR_INVITEONLYCHAN		473
-# define ERR_BANNEDFROMCHAN		474
+# define ERR_BANNEDFROMCHAN(channel)	        "474 " + channel + " :Connot join channel"
 # define ERR_BADCHANNELKEY(nick, channel)		"475 " + nick + " " + channel + " cannot join: wrong password"
 # define ERR_NOPRIVILEGES		481
 # define ERR_CHANOPRIVSNEEDED(nick, channel)					"482 " + nick + " " + channel + " " + " :You're not channel operator"

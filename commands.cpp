@@ -44,7 +44,7 @@ void User::reply(/*const std::string& reply_msg*/ const char* reply_msg)
 	std::string str_reply;
 	str_reply.assign(reply_msg);
 
-	std::cout << "reached this checkpoint" << std::endl;
+	std::cout << "reached this checkpoint, char* accepted in function reply: " << str_reply << std::endl;
 	std::string sendMessage = ":" + getPrefix() + " " + str_reply;
 	// write(":" + getPrefix() + " " + reply_msg);
 	send(_fd, sendMessage.c_str(), sendMessage.size(), 0);
@@ -63,14 +63,13 @@ void User::execute_join_cmd(User* user, std::string& cmd_name, std::vector<std::
 		Channel* newChannel = new Channel(args[0]);
 		this->_server->addChannel(newChannel);
 		newChannel->addUser(this);
-		std::string nickName = "nicktest";
-		std::string channelName = "test";
-		this->reply(this->RPL_JOIN(nickName, channelName));
-
+		// std::cout << "The nick fetched is: " << this->getNick() << " and the Channel Name: " << newChannel->getName() << std::endl;
+		std::string nickname("nicktest");
+		std::string channeltest("test");
+		this->reply(RPL_JOIN(nickname, channeltest));
+		//this->reply(RPL_JOIN(this->getNick(), newChannel->getName()));
 		this->_channelList.push_back(newChannel);
-
 		newChannel->addCreator(this);
-		// newChannel->findAllUsers();
 		// this->reply(RPL_NAMREPLY(args[0], foundChannel->findAllUsers()));
 	}
 	else

@@ -84,7 +84,7 @@ class User {
 		bool					isOperator(); // server operator: channel operators are stored in channel object
 		void					setOperator();
 
-		std::string				testing = "heiheihei";
+		std::string				replyMessage;
 
 
 	// all reply message replies: 

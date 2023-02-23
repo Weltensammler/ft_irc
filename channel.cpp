@@ -112,7 +112,6 @@ void	Channel::addUser(User* user)
 std::string	Channel::findAllUsers() {
 		std::string str;
 
-		std::cout << "reached here, with str" << std::endl;
 		std::vector<User*>::iterator itr;
 		for (itr = begin(this->_userLogList); itr != end(this->_userLogList); itr++)
 		{

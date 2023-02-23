@@ -136,7 +136,7 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 	} */
 
 	// check if user that wants to kick someone is in same channel
-	Channel* foundChannel = user->get_if_in_channel(const std::string& channel_name);
+	Channel* foundChannel = user->get_channel_if_in(const std::string & channel_name);
 	if (foundChannel == NULL)
 	{
 		user->reply(ERR_NOTONCHANNEL(user->getNick(), foundChannel._channelName));
@@ -144,7 +144,7 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 	}
 
 	// check if user is admin
-	if (foundChannel.ifOperator(this) == NULL) // overload or via getName()
+	if (foundChannel->ifOperator(*_nick) == NULL) // overload or via getName()
 	{
 		user->reply(ERR_CHANOPRIVSNEEDED(user->getNick(), foundChannel));
 		return;

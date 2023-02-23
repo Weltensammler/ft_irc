@@ -144,7 +144,7 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 	}
 
 	// check if user is admin
-	if (foundChannel->ifOperator(*_nick) == NULL) // overload or via getName()
+	if (foundChannel->ifOperator(*_nick) == false) // overload or via getName()
 	{
 		user->reply(ERR_CHANOPRIVSNEEDED(user->getNick(), foundChannel));
 		return;
@@ -202,18 +202,18 @@ void User::execute_quit_cmd(const std::string& cmd_name, std::vector<std::string
 
 
 // format: PING <server1> [<server2>]
-void User::execute_ping_cmd(const std::string& cmd_name, std::vector<std::string> args)
+/* void User::execute_ping_cmd(const std::string& cmd_name, std::vector<std::string> args)
 {
 	if (args.size() == 1)
 	{
-		if (!strcmp((const char *)args[0][0], (const char *)_host)) //comparing args[0] to servername, is _host the servername?
+		if (!strcmp((const char *)args[0][0], (const char *)_host)) //comparing args[0] to servername, is _host the servername? ANswer: no, it is not, the server name is _name unders the server, and the _host is the IP/host of a connected client
 		{
 			reply(("PONG " + args[0]).c_str());
 		}
 		else
 		 reply(ERR_NOSUCHSERVER(args[0]));
 	}
-}
+} */
 
 // format: INVITE <nickname> <channel>
 // void User::execute_invite_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)

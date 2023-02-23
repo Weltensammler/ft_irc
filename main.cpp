@@ -25,6 +25,7 @@ int main(int argc, char** argv)
 	if (argc != 3)
 	{
 		std::cout << "Please enter the right amount of arguments" << std::endl;
+		return (0);
 	}
 	int	port = atoi(argv[1]);
 	std::string serverPass(argv[2]);

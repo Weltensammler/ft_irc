@@ -6,24 +6,27 @@
 
 // -----------------------
 /* Currently only returns the nickname, because other data has to be added/checked still */
-std::string User::getPrefix()
- {
-	std::string return_msg; // = (*this->getNick());
+std::string User::getPrefix() {
+/* 	std::string return_msg; // = (*this->getNick());
+	char* buf = this->_host;
+	std::string hostname;
+	hostname.assign(buf);
+	std::string buffer = this->getNick(); */
+
 	char* buf = this->_host;
 	std::string hostname;
 	hostname.assign(buf);
 
-	if ((*this->getNick()).size() != 0)
-	{
-		return_msg += "!" + (*this->getNick());
-		if (hostname.size() != 0)
+	std::string return_msg = this->getNick();
+
+	/* :<nickname>!<username>@host CMD <target> \r\n */
+
+	if (/* this->getUsername().empty() */this->getNick().empty() == false) {
+		return_msg += "!" + /* this->getUsername() */ this->getNick();
+		if (/* *this->getHost().empty() */ hostname.empty() == false)
 		{
 			return_msg += "@" + hostname;
 		}
-	}
-	else
-	{
-		return_msg = (*this->getNick());
 	}
 	return(return_msg);
  }
@@ -38,27 +41,37 @@ std::string User::getPrefix()
 */
 void User::reply(/*const std::string& reply_msg*/ const char* reply_msg)
 {
-	// std::cout << "This message from reply function under User object\n";
 	std::string str_reply;
 	str_reply.assign(reply_msg);
 
+	std::cout << "reached this checkpoint" << std::endl;
 	std::string sendMessage = ":" + getPrefix() + " " + str_reply;
 	// write(":" + getPrefix() + " " + reply_msg);
-	send(*_fd, sendMessage.c_str(), sizeof(sendMessage), 0);
+	send(_fd, sendMessage.c_str(), sendMessage.size(), 0);
 }
 
 /*
 * format: JOIN <channel>{,<channel>} [<key>{,<key>}]
 */
-void User::execute_join_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
+void User::execute_join_cmd(User* user, std::string& cmd_name, std::vector<std::string> args)
 {
+	std::cout<<"it reached the Join Command" << std::endl;
+
+
 	if(this->_server->findChannel(args[0]) == NULL)
 	{
 		Channel* newChannel = new Channel(args[0]);
 		this->_server->addChannel(newChannel);
 		newChannel->addUser(this);
-		this->_channels.push_back(newChannel);
+		std::string nickName = "nicktest";
+		std::string channelName = "test";
+		this->reply(this->RPL_JOIN(nickName, channelName));
+
+		this->_channelList.push_back(newChannel);
+
 		newChannel->addCreator(this);
+		// newChannel->findAllUsers();
+		// this->reply(RPL_NAMREPLY(args[0], foundChannel->findAllUsers()));
 	}
 	else
 	{
@@ -69,21 +82,24 @@ void User::execute_join_cmd(User* user, const std::string& cmd_name, std::vector
 		}
 		else
 		{
-			// maximum of 20 channels per conenction
+			// maximum of 20 channels per connection
 			if (foundChannel->getClientCount() >= foundChannel->getMaxClients())
 			{
 				this->reply(ERR_CHANNELISFULL(this->getNick(), args[0]));
 				return ;
 			}
-			if (this->_channels.size() >= 20)
+			if (this->_channelList.size() >= 20)
 			{
 				this->reply(ERR_TOOMANYCHANNELS(this->getNick(), args[0]));
 				return ;
 			}
+			if (foundChannel->ifJoined(this->getNick()) != 1)
+				this->reply(ERR_USERONCHANNEL(user, channel));
+				return ;
 			foundChannel->addUser(this);
-			this->_channels.push_back(foundChannel);
-			this->reply(RPL_NAMREPLY(args[0], foundChannel->findAllUsers()));
-			// _countClients++;
+			this->_channelList.push_back(foundChannel);
+			// this->reply(RPL_NAMREPLY(args[0], foundChannel->findAllUsers()));
+			foundChannel->_countClients++;
 		}
 	}
 }
@@ -91,7 +107,7 @@ void User::execute_join_cmd(User* user, const std::string& cmd_name, std::vector
 // format: KICK <channel> <user> [<comment>]
 // void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
 // {
-// 	if(this->_channels.ifOperator(args[1]) == NULL)
+// 	if(this->_channelList.ifOperator(args[1]) == NULL)
 // 	{
 		
 // 	}
@@ -174,6 +190,23 @@ void User::execute_join_cmd(User* user, const std::string& cmd_name, std::vector
 // format: QUIT (:)[<quitmsg>] // COmmanted out by Madsi for debugging on 23.02.
 /* void User::execute_quit_cmd(const std::string& cmd_name, std::vector<std::string> args)
 {
+	if (args.empty() == true)
+	{
+		reason = "no reason";
+	}
+	else
+	{
+		reason = args[0];
+		if (reason[0] == ':')
+		{
+			reason = reason.substr(1);
+		}	
+	}
+	this->reply(RPL_QUIT(this->getPrefix(), reason));
+
+
+ // ---------------------------------------------------------------------
+
 	//send quit msg
 	std::vector<Channel *> channel = getChannels();
 	for(int i = 0;  i < getChannels().size(); i++)

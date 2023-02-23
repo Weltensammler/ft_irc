@@ -5,12 +5,13 @@
 * message: the message read in by the servers file descriptor
 * client needs to be initizalied with the fd of the server
 */
-void CommanHandler::start(User* user, const std::string& message) // client = user
+void CommanHandler::start(User* user, const std::string& message) // client = user // testing
 {
 	std::string line;
 	std::stringstream s_stream(message);
 	std::string cmd_name;
 
+	std::cout << "Reached debugging point 3" << std::endl;
 	while (std::getline(s_stream, line))
 	{
 		if (line[line.length() -1] == '\r') // irc messages are terminated with \r carriage return 
@@ -38,11 +39,12 @@ void CommanHandler::start(User* user, const std::string& message) // client = us
 			// 	user->reply(ERR_NOTREGISTERED(user->getNick())); // errormsg from documentation
 			// 	return;
 			// }
-			//cmd->execute(user, args);
-			// if (cmd_name.compare("JOIN") == 0)
-			// {
-			// 	user->execute_join_cmd(user, cmd_name, cmd_args);
-			// }
+			// cmd->execute(user, cmd_args);
+			if (cmd_name.compare("JOIN") == 0)
+			{
+				user->execute_join_cmd(user, cmd_name, cmd_args);
+				std::cout << "reached debugging point 4 - JOIN cmd" << std::endl;
+			}
 			// else if (cmd_name.compare("KICK") == 0)
 			// {
 			// 	user->execute_kick_cmd(user, cmd_name, cmd_args);

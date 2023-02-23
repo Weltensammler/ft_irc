@@ -1,6 +1,6 @@
 #include "channel.hpp"
 
-Channel::Channel(std::string newName) : _channelName(newName), _maxClients(60) {
+Channel::Channel(std::string newName) : _channelName(newName), _maxClients(60), _countClients(0) {
 	std::cout << "New channel created with name " << _channelName << std::endl;
 }
 
@@ -46,7 +46,7 @@ void Channel::delete_user(User* user)
 
 	while (start != end)
 	{
-		if ((*(*start)).getNick()->compare(*user->getNick()) == 0)
+		if (((*start))->getNick().compare(user->getNick()) == 0)
 		{
 			this->_userLogList.erase(start);
 		}
@@ -71,9 +71,9 @@ bool	Channel::ifBanned(User* ifBan) {
 }
 
 
-const std::string* Channel::getName()
+const std::string Channel::getName()
 {
-	return (&this->_channelName);
+	return (this->_channelName);
 }
 
 
@@ -109,16 +109,18 @@ void	Channel::addUser(User* user)
 	}
 }  */
 
-std::string	Channel::findAllUsers()
-{
+std::string	Channel::findAllUsers() {
 		std::string str;
 
+		std::cout << "reached here, with str" << std::endl;
 		std::vector<User*>::iterator itr;
 		for (itr = begin(this->_userLogList); itr != end(this->_userLogList); itr++)
 		{
-			str += *(*itr)->getNick() + " ";
+			std::string temp = (*itr)->getNick();
+			str += temp + " ";
+			temp.clear();
 		}
-			return (str);
+		return (str);
 }
 
 int		Channel::ifOperator(std::string _nick)
@@ -128,7 +130,7 @@ int		Channel::ifOperator(std::string _nick)
 		std::vector<User*>::iterator itr;
 		for (itr=begin(this->_operatorList); itr != end(this->_operatorList); itr++)
 		{
-			if(_nick == *(*itr)->getNick())
+			if(_nick == (*itr)->getNick())
 				return(1);
 		}
 		return (0);
@@ -141,23 +143,39 @@ void	Channel::deleteUser(std::string _nick)
 		std::vector<User*>::iterator itr;
 		for (itr=begin(this->_userLogList); itr != end(this->_userLogList); itr++)
 		{
-			if(_nick == *(*itr)->getNick())
+			if(_nick == (*itr)->getNick())
 				_userLogList.erase(itr);
 		}
 }
 
-User *	Channel::get_user_if_in(const std::string& _nick)
+// commented out for adding new iterator and testing, 23.02.
+/* User*	Channel::get_user_if_in( std::string& _nick)
 {
 	std::vector<User *>::iterator start = this->_userLogList.begin();
 	std::vector<User *>::iterator end = this->_userLogList.end();
+	std::string *test = _nick;
 
 	while (start != end)
 	{
-		if ((*start)->getNick()->compare(_nick) == 0)
+		if ((*start)->getNick()->compare(test) == 0)
 		{
+			std::cout << (*start)->testing << std::endl;
 			return ((*start));
 		}
 		start++;
 	}
 	return (NULL);
+} */
+
+int		Channel::ifJoined(std::string _nick)
+{
+		std::string str;
+
+		std::vector<User*>::iterator itr;
+		for (itr=begin(this->_userLogList); itr != end(this->_userLogList); itr++)
+		{
+			if(_nick == (*itr)->getNick())
+				return(1);
+		}
+		return (0);
 }

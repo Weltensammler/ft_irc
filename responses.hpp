@@ -6,7 +6,8 @@
 
 #define TIMEOUT                 180
 
-# define RPL_WELCOME(nick)              ("001 " #nick " welcome to ft_irc")
+// # define RPL_WELCOME(nick)              ("001 " #nick " welcome to ft_irc")
+
 # define RPL_YOURHOST           002
 # define RPL_CREATED            003
 # define RPL_MYINFO             004
@@ -42,13 +43,16 @@
 
 # define RPL_WHOREPLY           352
 # define RPL_ENDOFWHO           315
-# define RPL_NAMREPLY(channel, userlist)                  ("353 " #channel " :" #userlist)
+# define RPL_NAMREPLY(channel, userlist)                 ("353 " #channel " :" #userlist)
 # define RPL_ENDOFNAMES(nick, channel)                   ("366 " #nick " " #channel " :End of userlist")
 # define RPL_ENDOFLINKS         365
 # define RPL_BANLIST            367
 # define RPL_ENDOFBANLIST       368
-# define RPL_JOIN(nick, channel)				        (":" #nick " JOIN :" #channel)
+
+// # define RPL_JOIN(nick, channel)                        (":" #nick " JOIN :" #channel)
+
 # define RPL_KICK(kicker, channel, target, reason)      (":" #kicker " KICK " #channel " " #target " :" #reason)
+# define RPL_QUIT(nick, reason)                         (":" + #nick + " QUIT: " + #reason)
 
 # define RPL_INFO               371
 # define ERR_NOSUCHNICK(target, channel_name)			("401 " #target  " " #channel_name " :No such nick/channel")
@@ -73,7 +77,7 @@
 # define ERR_NICKCOLLISION		436
 # define ERR_USERNOTINCHANNEL(target, channel_name)	("441 " #target " " #channel_name " :They aren't on that channel")
 # define ERR_NOTONCHANNEL(nick, channel_name)		("442 " #nick " " #channel_name " :You're not on that channel")
-# define ERR_USERONCHANNEL		443
+# define ERR_USERONCHANNEL(user, channel)		("443 " #user " " #channel " :is already on channel")
 # define ERR_NOLOGIN			444
 # define ERR_SUMMONDISABLED		445
 # define ERR_USERSDISABLED		446

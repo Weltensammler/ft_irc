@@ -4,7 +4,7 @@
 #include "server.hpp"
 
 User::User(pollfd &client, char* host, char* service, Server* server) : _client(client), _host(host), _service(service), _server(server) {
-	_fd = &_client.fd;
+	_fd = _client.fd;
 	_userState = UNAUTH;
 	_creationTime = std::time(NULL);
 	std::cout << "Default user constructor called with Client Input" << std::endl;
@@ -21,35 +21,35 @@ User::~User() {
 }
 
 void	User::setFd(int new_fd) {
-	this->_fd = &new_fd;
+	this->_fd = new_fd;
 }
 
-int*	User::getFd() const {
+int	User::getFd() const {
 	return (this->_fd);
 }
 
 void	User::setNick(std::string nick) {
 	std::transform(nick.begin(), nick.end(), nick.begin(), ::tolower); // check if tolower won't create problems later
-	this->_nick = &nick;
+	_nick = nick;
 }
 
-std::string*	User::getNick() const {
+std::string	User::getNick() const {
 	return (this->_nick);
 }
 
 void	User::setUsername(std::string username) {
-	this->_username = &username;
+	this->_username = username;
 }
 
-std::string*	User::getUsername() const {
+std::string	User::getUsername() const {
 	return (this->_username);
 }
 
 void	User::setRealname(std::string realname) {
-	this->_username = &realname;
+	this->_username = realname;
 }
 
-std::string*	User::getRealname() const {
+std::string	User::getRealname() const {
 	return (this->_realname);
 }
 
@@ -79,17 +79,17 @@ time_t	User::getTime() {
 
 std::vector<Channel *>	User::getChannels()
 {
-	return (this->_channels);
+	return (this->_channelList);
 }
 
 Channel*	User::get_channel_if_in(const std::string& channel_name)
 {
-	std::vector<Channel*>::iterator start = this->_channels.begin();
-	std::vector<Channel*>::iterator end = this->_channels.end();
+	std::vector<Channel*>::iterator start = this->_channelList.begin();
+	std::vector<Channel*>::iterator end = this->_channelList.end();
 
 	while (start != end)
 	{
-		if ((*start)->getName()->compare(channel_name) == 0)
+		if ((*start)->getName().compare(channel_name) == 0)
 		{
 			return ((*start));
 		}
@@ -120,8 +120,8 @@ void	User::setService(char* service) {
 
 void	User::deleteChannel(std::string channel) {
 		std::vector<Channel*>::iterator itr;
-		for (itr=begin(this->_channels); itr != end(this->_channels); itr++) {
-			if(channel == *(*itr)->getName())
-				_channels.erase(itr);
+		for (itr=begin(this->_channelList); itr != end(this->_channelList); itr++) {
+			if(channel == (*itr)->getName())
+				_channelList.erase(itr);
 		}
 }

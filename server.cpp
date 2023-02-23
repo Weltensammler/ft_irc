@@ -24,7 +24,7 @@ std::string	Server::getPass() const {
 User*	Server::findByFd(int clientFd) {
 	std::vector<User*>::iterator itr;
 	for (itr=begin(this->_userList); itr != end(this->_userList); itr++) {
-		if (clientFd == *(*itr)->getFd())
+		if (clientFd == (*itr)->getFd())
 			return (*itr);
 	}
 	std::cerr << "User FD not found" << std::endl;
@@ -34,7 +34,7 @@ User*	Server::findByFd(int clientFd) {
 User*	Server::findByNick(std::string nick) {
 	std::vector<User*>::iterator itr;
 	for (itr=begin(this->_userList); itr != end(this->_userList); itr++) {
-		if (nick == *(*itr)->getNick())
+		if (nick == (*itr)->getNick())
 			return (*itr);
 	}
 	std::cerr << "User nickname not found" << std::endl;
@@ -44,7 +44,7 @@ User*	Server::findByNick(std::string nick) {
 Channel*	Server::findChannel(std::string name) {
 	std::vector<Channel*>::iterator itr;
 	for (itr=begin(this->_channelList); itr != end(this->_channelList); itr++) {
-		if (name == *(*itr)->getName())
+		if (name == (*itr)->getName())
 			return (*itr);
 	}
 	std::cerr << "Channel not found by name" << std::endl;
@@ -76,9 +76,9 @@ void	Server::reconnectUser(pollfd &client, char* host, char* service) {
 bool	Server::authUser(User* activeUser) {
 	if (activeUser->pwCheck() == false)
 		return false;
-	if (!activeUser->getNick()->c_str())
+	if (!activeUser->getNick().c_str())
 		return false;
-	if (!activeUser->getUsername()->c_str())
+	if (!activeUser->getUsername().c_str())
 		return false;
 	else
 		return true;
@@ -191,7 +191,7 @@ void Server::sendmsg(User* foundUser)
 	{
 		if (clients[i].fd != -1)
 		{
-			send(*foundUser->getFd(), this->msg->message.c_str(), this->msg->message.size(), 0);
+			send(foundUser->getFd(), this->msg->message.c_str(), this->msg->message.size(), 0);
 			// std::cout << "Message: " << buf << std::endl;
 		}
 	}
@@ -292,9 +292,10 @@ int Server::acceptCall()
 				}
 				else
 					return (1);
-				std::cout << "Reached here" << std::endl;
+				std::cout << "Reached debugging point 0" << std::endl;
 				this->readInput(i);
 				handler->start(foundUser, msg->message);
+				std::cout << "Reached debugging point 2" << std::endl;
 				sendmsg(foundUser);
 				// AnswerToClient
 			}

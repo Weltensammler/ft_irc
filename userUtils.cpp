@@ -109,8 +109,8 @@ void User::execute_join_cmd(User* user, const std::string& cmd_name, std::vector
 	}
 } */
 
-// format: KICK <channel> <user> [<comment>]
-void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
+// format: KICK <channel> <user> [<comment>] // COMMENTED OUT BY MADIS FOR DEBUGGING 23.02.
+/* void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args)
 {
 	if (args.size() < 2 )
 	{
@@ -123,7 +123,7 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 	std::string reason = "";
 
 	// fill in reasons - commented out by Madis during debugging 
-	/* if (args.size() >= 3 && (args[2][0] != ':' || args[2].size() >= 1))
+	if (args.size() >= 3 && (args[2][0] != ':' || args[2].size() >= 1))
 	{
 		std::vector<std::string>::iterator start = args.begin() + 2;
 		std::vector<std::string>::iterator end = args.end();
@@ -133,7 +133,7 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 			reason.append((*start) + " ");
 			start++;
 		}
-	} */
+	}
 
 	// check if user that wants to kick someone is in same channel
 	Channel* foundChannel = user->get_channel_if_in(channel_name);
@@ -169,10 +169,10 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 
 	
 	std::cout << target << " has been kicked from channel " << channel_name << ".\n";
-}
+} */
 
-// format: QUIT (:)[<quitmsg>]
-void User::execute_quit_cmd(const std::string& cmd_name, std::vector<std::string> args)
+// format: QUIT (:)[<quitmsg>] // COmmanted out by Madsi for debugging on 23.02.
+/* void User::execute_quit_cmd(const std::string& cmd_name, std::vector<std::string> args)
 {
 	//send quit msg
 	std::vector<Channel *> channel = getChannels();
@@ -198,7 +198,7 @@ void User::execute_quit_cmd(const std::string& cmd_name, std::vector<std::string
 	setFd(-1);
 	_isRegistered = false;
 	//killUser(this, "User hast quit"); //When command is implemented, we only need to call it
-}
+} */
 
 
 // format: PING <server1> [<server2>]

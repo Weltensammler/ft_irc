@@ -254,12 +254,14 @@ int Server::acceptCall()
 						std::cout << "msg: " << this->msg << std::endl;
 						std::cout << "pass: " << this->_pass << std::endl;
 						std::cout << "port: " << this->_port << std::endl;
-						std::cout << "serverName: " << this->_serverName << std::endl;
+						std::cout << "host: " << host << std::endl;
+						std::cout << "service: " << service << std::endl;
 						// std::cout << "channelList: " << this->_channelList[0] << std::endl;
 						// std::cout << "userList: " << this->_userList[0] << std::endl;
 						// std::cout << "channelList: " << this->_channelList[0] << std::endl;
 						std::cout << "*********************************************************************************" << std::endl;
 						User	*newUser = new User(clients[j], host, service, this);
+						std::cout << "Reached debugging point 1" << std::endl;
 						this->_userList.push_back(newUser);
 					}
 					
@@ -380,7 +382,6 @@ void	Server::killUser(User * user)
 	}
 	delete user;
 }
-
 
 void	Server::addChannel(Channel * newChannel)
 {

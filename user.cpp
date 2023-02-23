@@ -4,9 +4,9 @@
 #include "server.hpp"
 
 User::User(pollfd &client, char* host, char* service, Server* server) : _client(client), _host(host), _service(service), _server(server) {
-	*this->_fd = this->_client.fd;
-	this->_userState = UNAUTH;
-	this->_creationTime = std::time(NULL);
+	_fd = &_client.fd;
+	_userState = UNAUTH;
+	_creationTime = std::time(NULL);
 	std::cout << "Default user constructor called with Client Input" << std::endl;
 }
 

@@ -63,7 +63,7 @@ public:
 	//void					joinChannel(); // makes user join a channel; prompts server to send message to all relevant users about joining; 
 	//void					leaveChannel(); // makes user itself leave channel; sends message that user left channel;
 	//void					createChannel(); // ourUser.createChannel() _ creates new channel, and user is made operator; called inside joinChannel();
-	void					deleteChannel(std::string channel);
+	void					deleteChannel(const std::string channel);
 
 
 	// All following functions are in userUtils.cpp file:
@@ -76,7 +76,7 @@ public:
 	void 					execute_quit_cmd(const std::string& cmd_name, std::vector<std::string> args);
 	void					execute_ping_cmd(const std::string& cmd_name, std::vector<std::string> args);
 	void					execute_nick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
-	void					execute_user_cmd();
+	void					execute_user_cmd(User* user, std::vector<std::string> args);
 
 	std::vector<Channel *>	getChannels();
 	Channel*				get_channel_if_in(const std::string& channel_name);

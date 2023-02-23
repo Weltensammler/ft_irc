@@ -163,7 +163,7 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 
 	foundChannel->notify_others(RPL_KICK(user, channel_name, target, reason), this);
 
-	target_user->deleteChannel(target_user->get_channel_if_in(channel_name));
+	target_user->deleteChannel(*(target_user->get_channel_if_in(channel_name))->getName());
 
 	foundChannel->deleteUser(target);
 
@@ -208,7 +208,7 @@ void User::execute_ping_cmd(const std::string& cmd_name, std::vector<std::string
 	{
 		if (!strcmp((const char *)args[0][0], (const char *)_host)) //comparing args[0] to servername, is _host the servername?
 		{
-			reply("PONG " + args[0]);
+			reply(("PONG " + args[0]).c_str());
 		}
 		else
 		 reply(ERR_NOSUCHSERVER(args[0]));
@@ -273,13 +273,13 @@ void User::execute_user_cmd(User* user, std::vector<std::string> args)
 {
  if (user->isRegistered())
  {
-	user->reply(ERR_ALREADYREGISTERED(user->getNick()));
+	user->reply(ERR_ALREADYREGISTRED(user->getNick()));
 	return;
  }
 
  if (args.size() < 4)
  {
-	user->reply(ERR_NEEDMOREPARAMS(user->getNick(), "USER");
+	user->reply(ERR_NEEDMOREPARAMS(user->getNick(), "USER"));
 	return;
  }
 

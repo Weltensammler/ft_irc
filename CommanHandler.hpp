@@ -8,14 +8,17 @@
 #include "user.hpp"
 
 class User;
+// class Command;
+class Message;
+class Server;
 
-class CommandHandler
+class CommanHandler
 {
 	public:
-		CommandHandler();
-		CommandHandler(const CommandHandler& obj);
-		CommandHandler& operator=(const CommandHandler& obj);
-		~CommandHandler();
+		CommanHandler();
+		CommanHandler(const CommanHandler& obj);
+		CommanHandler& operator=(const CommanHandler& obj);
+		~CommanHandler();
 
 		void start(User* user, const std::string& message);
 

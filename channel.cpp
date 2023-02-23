@@ -92,7 +92,8 @@ void	Channel::addUser(User* user)
 	this->_userLogList.push_back(user);
 }
 
-void Channel::notify_others(const std::string& msg, User* skip)
+// Currently commented out for bugfixing: has to be revisited 
+/* void Channel::notify_others(const std::string& msg, User* skip)
 {
 	std::vector<User*>::iterator start = this->_userLogList.begin();
 	std::vector<User*>::iterator end = this->_userLogList.end();
@@ -106,7 +107,7 @@ void Channel::notify_others(const std::string& msg, User* skip)
 		(*start)->reply(msg.c_str());
 		start++;
 	}
-} 
+}  */
 
 std::string	Channel::findAllUsers()
 {

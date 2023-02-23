@@ -41,7 +41,8 @@ public:
 	void					delete_user(User* user);
 	std::string				findAllUsers();
 	int						ifOperator(std::string _nick);
-	// void					notify_others(const std::string& msg, User* skip);
+	User *					get_user_if_in(const std::string& _nick);
+	void					notify_others(const std::string& msg, User* skip);
 
 	// std::string*			channelName;
 

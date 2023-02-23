@@ -118,7 +118,7 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 		return;
 	}
 
-	std::string channel_name = args[0];
+	const std::string channel_name = args[0];
 	std::string target = args[1];
 	std::string reason = "";
 
@@ -136,7 +136,7 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 	} */
 
 	// check if user that wants to kick someone is in same channel
-	Channel* foundChannel = user->get_channel_if_in(const std::string & channel_name);
+	Channel* foundChannel = user->get_channel_if_in(channel_name);
 	if (foundChannel == NULL)
 	{
 		user->reply(ERR_NOTONCHANNEL(user->getNick(), foundChannel._channelName));
@@ -151,7 +151,7 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 	}
 
 	// check if target-user is in channel
-	User* target_user = channel->get_user_if_in(target);
+	User* target_user = foundChannel->get_user_if_in(target);
 	if (target_user == NULL)
 	{
 		user->reply(ERR_NOSUCHNICK(target, channel_name));
@@ -161,7 +161,7 @@ void User::execute_kick_cmd(User* user, const std::string& cmd_name, std::vector
 
 	// actual kicking
 
-	channel->notify_others(RPL_KICK(user, channel_name, target, reason), this);
+	foundChannel->notify_others(RPL_KICK(user, channel_name, target, reason), this);
 
 	target_user->deleteChannel(target_user->get_channel_if_in(channel_name));
 

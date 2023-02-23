@@ -70,7 +70,7 @@ public:
 	std::string 			getPrefix();
 	void					reply(const char * reply_msg);
 	void					execute_join_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
-	//void 					write_msg(const std::string& msg) const;
+	// void 					write_msg(const std::string& msg) const;
 	void					execute_kick_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
 	void 					execute_invite_cmd(User* user, const std::string& cmd_name, std::vector<std::string> args);
 	void 					execute_quit_cmd(const std::string& cmd_name, std::vector<std::string> args);
@@ -79,7 +79,7 @@ public:
 	void					execute_user_cmd();
 
 	std::vector<Channel *>	getChannels();
-	const Channel*			get_channel_if_in(const std::string& channel_name);
+	Channel*				get_channel_if_in(const std::string& channel_name);
 
 	bool					isOperator(); // server operator: channel operators are stored in channel object
 	void					setOperator();

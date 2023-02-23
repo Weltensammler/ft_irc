@@ -92,21 +92,21 @@ void	Channel::addUser(User* user)
 	this->_userLogList.push_back(user);
 }
 
-/* void Channel::notify_others(const std::string& msg, User* skip)
+void Channel::notify_others(const std::string& msg, User* skip)
 {
 	std::vector<User*>::iterator start = this->_userLogList.begin();
 	std::vector<User*>::iterator end = this->_userLogList.end();
 
 	while (start != end)
 	{
-		if ((*start)->getNick().compare(skip->getNick) == 0)
+		if ((*start)->getNick()->compare(*skip->getNick()) == 0)
 		{
 			continue;
 		}
-		(*start)->write_msg(msg);
+		(*start)->reply(msg.c_str());
 		start++;
 	}
-} */
+} 
 
 std::string	Channel::findAllUsers()
 {
@@ -143,4 +143,20 @@ void	Channel::deleteUser(std::string _nick)
 			if(_nick == *(*itr)->getNick())
 				_userLogList.erase(itr);
 		}
+}
+
+User *	Channel::get_user_if_in(const std::string& _nick)
+{
+	std::vector<User *>::iterator start = this->_userLogList.begin();
+	std::vector<User *>::iterator end = this->_userLogList.end();
+
+	while (start != end)
+	{
+		if ((*start)->getNick()->compare(_nick) == 0)
+		{
+			return ((*start));
+		}
+		start++;
+	}
+	return (NULL);
 }

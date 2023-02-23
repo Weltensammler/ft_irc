@@ -82,7 +82,7 @@ std::vector<Channel *>	User::getChannels()
 	return (this->_channels);
 }
 
-const Channel*	User::get_channel_if_in(const std::string& channel_name)
+Channel*	User::get_channel_if_in(const std::string& channel_name)
 {
 	std::vector<Channel*>::iterator start = this->_channels.begin();
 	std::vector<Channel*>::iterator end = this->_channels.end();

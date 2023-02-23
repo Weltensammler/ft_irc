@@ -62,7 +62,7 @@ void Channel::delete_user(User* user)
 
 bool	Channel::ifBanned(User* ifBan) {
 	std::vector<User*>::iterator itr;
-	for (itr=begin(this->_bannedList); itr != end(this->_bannedList); ++itr) {
+	for (itr=begin(this->_bannedList); itr != end(this->_bannedList); itr++) {
 		if ((char *)ifBan->getHost() == *(*itr)->getHost())
 			return true;
 	}
@@ -114,7 +114,7 @@ std::string	Channel::findAllUsers()
 		std::string str;
 
 		std::vector<User*>::iterator itr;
-		for (itr = begin(this->_userLogList); itr != end(this->_userLogList); ++itr)
+		for (itr = begin(this->_userLogList); itr != end(this->_userLogList); itr++)
 		{
 			str += *(*itr)->getNick() + " ";
 		}
@@ -126,7 +126,7 @@ int		Channel::ifOperator(std::string _nick)
 		std::string str;
 
 		std::vector<User*>::iterator itr;
-		for (itr=begin(this->_operatorList); itr != end(this->_operatorList); ++itr)
+		for (itr=begin(this->_operatorList); itr != end(this->_operatorList); itr++)
 		{
 			if(_nick == *(*itr)->getNick())
 				return(1);
@@ -139,7 +139,7 @@ void	Channel::deleteUser(std::string _nick)
 		std::string str;
 
 		std::vector<User*>::iterator itr;
-		for (itr=begin(this->_userLogList); itr != end(this->_userLogList); ++itr)
+		for (itr=begin(this->_userLogList); itr != end(this->_userLogList); itr++)
 		{
 			if(_nick == *(*itr)->getNick())
 				_userLogList.erase(itr);

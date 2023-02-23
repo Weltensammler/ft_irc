@@ -23,7 +23,7 @@ std::string	Server::getPass() const {
 
 User*	Server::findByFd(int clientFd) {
 	std::vector<User*>::iterator itr;
-	for (itr=begin(this->_userList); itr != end(this->_userList); ++itr) {
+	for (itr=begin(this->_userList); itr != end(this->_userList); itr++) {
 		if (clientFd == *(*itr)->getFd())
 			return (*itr);
 	}
@@ -33,7 +33,7 @@ User*	Server::findByFd(int clientFd) {
 
 User*	Server::findByNick(std::string nick) {
 	std::vector<User*>::iterator itr;
-	for (itr=begin(this->_userList); itr != end(this->_userList); ++itr) {
+	for (itr=begin(this->_userList); itr != end(this->_userList); itr++) {
 		if (nick == *(*itr)->getNick())
 			return (*itr);
 	}
@@ -43,7 +43,7 @@ User*	Server::findByNick(std::string nick) {
 
 Channel*	Server::findChannel(std::string name) {
 	std::vector<Channel*>::iterator itr;
-	for (itr=begin(this->_channelList); itr != end(this->_channelList); ++itr) {
+	for (itr=begin(this->_channelList); itr != end(this->_channelList); itr++) {
 		if (name == *(*itr)->getName())
 			return (*itr);
 	}
@@ -265,13 +265,13 @@ int Server::acceptCall()
 						this->_userList.push_back(newUser);
 					}
 					
-					// Testing ---
-					std::ostringstream cmd;
-					// cmd << "%C29*%O$tCapabilities acknowledged: %C29$2%O";
-					cmd << "%UChannel          mjpro   fun";
-					std::string cmd_str = cmd.str();
-					send(clients[j].fd, cmd_str.c_str(), cmd_str.size(), 0);
-					// --- until here
+							// Testing ---
+									/* std::ostringstream cmd;
+											// cmd << "%C29*%O$tCapabilities acknowledged: %C29$2%O";
+									cmd << "%UChannel          mjpro   fun";
+									std::string cmd_str = cmd.str();
+									send(clients[j].fd, cmd_str.c_str(), cmd_str.size(), 0); */
+							// --- until here
 
 				}
 				else

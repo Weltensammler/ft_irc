@@ -120,7 +120,7 @@ void	User::setService(char* service) {
 
 void	User::deleteChannel(std::string channel) {
 		std::vector<Channel*>::iterator itr;
-		for (itr=begin(this->_channels); itr != end(this->_channels); ++itr) {
+		for (itr=begin(this->_channels); itr != end(this->_channels); itr++) {
 			if(channel == *(*itr)->getName())
 				_channels.erase(itr);
 		}

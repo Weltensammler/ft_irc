@@ -15,23 +15,27 @@
 
 int main(int argc, char** argv)
 {
-	std::string	sample_input = "/ping    ";
+	std::string	sample_input = "/mode  a +ob c -od e";
 	Message	*test = new Message(sample_input);
 
-	std::cout << "isCommand: " << test->getIsCommand() << ", isValid: " << test->getIsValid() << ", isChat: " << test->getIsChat() << std::endl;
+	std::cout << std::endl;
+	std::cout << "IN MAIN" << std::endl;
+	std::cout << std::endl;
+	// std::cout << "isCommand: " << test->getIsCommand() << ", isValid: " << test->getIsValid() << ", isChat: " << test->getIsChat() << std::endl;
 	if (sample_input.at(0) == '/' && sample_input.at(1) != ' ')
 	{
-		std::cout << "Command: $" << test->getCommand() << "$" << std::endl;
-		std::cout << "Params: ";
-		// for (std::vector<std::string>::iterator it = test->getParams().begin(); it != test->getParams().end(); it++)
-		// 	std::cout << "$" << *it << "$ " << std::endl;
-		//std::cout << "$" << *(test->getParams().begin()) << "$ ";
-		//std::cout << "$" << *(test->getParams().begin() + 1) << "$ ";
-		std::cout << std::endl;
-		int	iterDiff = (test->getParams().end() - test->getParams().begin());
-		std::cout << "iterDiff: " << iterDiff << std::endl;
-		std::cout << "params.size(): " << test->getParams().size();
-		std::cout << std::endl;
+		std::cout << *test << std::endl;
+		// std::cout << "Command: $" << test->getCommand() << "$" << std::endl;
+		// std::cout << "Params: ";
+		// // for (std::vector<std::string>::iterator it = test->getParams().begin(); it != test->getParams().end(); it++)
+		// // 	std::cout << "$" << *it << "$ " << std::endl;
+		// //std::cout << "$" << *(test->getParams().begin()) << "$ ";
+		// //std::cout << "$" << *(test->getParams().begin() + 1) << "$ ";
+		// std::cout << std::endl;
+		// int	iterDiff = (test->getParams().end() - test->getParams().begin());
+		// std::cout << "iterDiff: " << iterDiff << std::endl;
+		// std::cout << "params.size(): " << test->getParams().size();
+		// std::cout << std::endl;
 	}
 	else
 		std::cout << "freetext: $" << test->getBuffer() << "$" << std::endl;
